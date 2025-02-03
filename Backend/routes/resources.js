@@ -1,18 +1,13 @@
 const express = require("express");
-const {
-  listResources,
-  addResource,
-  updateResource,
-  deleteResource,
-} = require("../controllers/resourcesController");
-const accessControl = require("../middlewares/accessControl");
+const verificarToken = require("../middlewares/authMiddleware");
+const { getResources, addResource, updateResource, deleteResource } = require("../controllers/resourcesController");
 
 const router = express.Router();
 
-// Rotas de recursos
-router.get("/", listResources); // Listar recursos
-router.post("/", accessControl("admin"), addResource); // Adicionar recurso
-router.put("/:id", accessControl("admin"), updateResource); // Atualizar recurso
-router.delete("/:id", accessControl("admin"), deleteResource); // Remover recurso
+// Rotas protegidas
+router.get("/", verificarToken, getResources);
+router.post("/", verificarToken, addResource);
+router.put("/:id", verificarToken, updateResource);
+router.delete("/:id", verificarToken, deleteResource);
 
 module.exports = router;
