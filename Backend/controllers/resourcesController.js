@@ -1,7 +1,8 @@
 const resources = require("../models/resources");
 
 // Listar recursos com filtros e paginação
-exports.listResources = (req, res) => {
+exports.getResources = (req, res) => {
+  console.log("📌 Recursos carregados:", resources);
   const { status, location, page = 1, limit = 10 } = req.query;
 
   let filteredResources = resources;

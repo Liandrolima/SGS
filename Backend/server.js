@@ -5,6 +5,8 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
+console.log("JWT_SECRET:", process.env.JWT_SECRET); // 🔍 Teste se o .env está carregando
+
 const authRoutes = require("./routes/auth");
 const resourceRoutes = require("./routes/resources");
 const errorHandler = require("./middlewares/errorHandler");
