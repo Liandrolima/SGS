@@ -15,8 +15,10 @@ const Dashboard = () => {
 
     const fetchData = async () => {
       try {
-        const data = await api.getResources(token);
-        setResources(data);
+        const data = await api.getResources(); // 🔥 Removido o argumento 'token'
+        if (data) {
+          setResources(data);
+        }
       } catch (err) {
         console.error("Erro ao carregar recursos:", err);
       }
@@ -29,10 +31,18 @@ const Dashboard = () => {
     <div>
       <h2>Dashboard</h2>
       <ul>
-        {resources.map((resource, index) => (
-          <li key={index}>{resource.nome}</li>
-        ))}
+        {resources.length > 0 ? (
+          resources.map((resource) => (
+            <li key={resource.id}>
+              <strong>{resource.name}</strong> ({resource.serialNumber}) <br />
+              📍 Local: {resource.location} | 🏷️ Status: {resource.status}
+            </li>
+          ))
+        ) : (
+          <p>Nenhum recurso encontrado.</p>
+        )}
       </ul>
+
     </div>
   );
 };
