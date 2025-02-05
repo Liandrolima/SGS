@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "./servicos/api";
+import { Button, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress } from "@mui/material";
 
 const Dashboard = () => {
   const [resources, setResources] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,12 +17,14 @@ const Dashboard = () => {
 
     const fetchData = async () => {
       try {
-        const data = await api.getResources(); // 🔥 Removido o argumento 'token'
+        const data = await api.getResources();
         if (data) {
           setResources(data);
         }
       } catch (err) {
         console.error("Erro ao carregar recursos:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -28,22 +32,38 @@ const Dashboard = () => {
   }, [navigate]);
 
   return (
-    <div>
-      <h2>Dashboard</h2>
-      <ul>
-        {resources.length > 0 ? (
-          resources.map((resource) => (
-            <li key={resource.id}>
-              <strong>{resource.name}</strong> ({resource.serialNumber}) <br />
-              📍 Local: {resource.location} | 🏷️ Status: {resource.status}
-            </li>
-          ))
-        ) : (
-          <p>Nenhum recurso encontrado.</p>
-        )}
-      </ul>
-
-    </div>
+    <Paper sx={{ padding: 2, margin: "20px", textAlign: "center" }}>
+      <Typography variant="h4" gutterBottom>
+        Painel de Controle
+      </Typography>
+      {loading ? (
+        <CircularProgress />
+      ) : resources.length > 0 ? (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell><strong>Nome</strong></TableCell>
+                <TableCell><strong>Status</strong></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {resources.map((resource) => (
+                <TableRow key={resource.id}>
+                  <TableCell>{resource.name}</TableCell>
+                  <TableCell>{resource.status}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Typography variant="h6">Nenhum recurso encontrado.</Typography>
+      )}
+      <Button variant="contained" color="primary" sx={{ marginTop: 2 }} onClick={() => navigate("/relatorios")}>
+        Ver Relatórios
+      </Button>
+    </Paper>
   );
 };
 
