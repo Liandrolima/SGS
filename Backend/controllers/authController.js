@@ -1,7 +1,9 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const users = require("../models/users");
+const bcrypt = require("bcryptjs");
+let users = require("../models/users"); // Simulação de banco de dados
 
+// Função de Login
 exports.login = (req, res) => {
   const { email, password } = req.body;
 
@@ -23,4 +25,28 @@ exports.login = (req, res) => {
     token, 
     user: { email: user.email, role: user.role } 
   });
+};
+
+// Função de Registro (Somente para Administradores)
+exports.register = (req, res) => {
+  const { email, password, role } = req.body;
+
+  // Verifica se o usuário autenticado é admin
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Acesso negado. Permissão insuficiente." });
+  }
+
+  // Verifica se o e-mail já existe
+  if (users.some(user => user.email === email)) {
+    return res.status(400).json({ message: "E-mail já registrado." });
+  }
+
+  // Criptografa a senha antes de salvar
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+  // Cria novo usuário
+  const newUser = { email, password: hashedPassword, role, id: users.length + 1 };
+  users.push(newUser);
+
+  res.status(201).json({ message: "Usuário cadastrado com sucesso!", user: { email, role } });
 };
