@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import { api } from "./servicos/api";
-import { Button, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress } from "@mui/material";
+import { 
+  Button, Typography, Paper, Table, TableBody, TableCell, 
+  TableContainer, TableHead, TableRow, CircularProgress, TextField 
+} from "@mui/material";
 import { jwtDecode } from "jwt-decode";
- // Importar para decodificar o token
 
 const Dashboard = () => {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState(null); // Estado para armazenar a role do usuário
+  const [userRole, setUserRole] = useState(null);
+  const [editingResource, setEditingResource] = useState(null);
+  const [newResource, setNewResource] = useState({ name: "", status: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,8 +23,8 @@ const Dashboard = () => {
     }
 
     try {
-      const decodedToken = jwtDecode(token); // Decodificar o token
-      setUserRole(decodedToken.role); // Armazena a role do usuário no estado
+      const decodedToken = jwtDecode(token);
+      setUserRole(decodedToken.role);
     } catch (error) {
       console.error("Erro ao decodificar token:", error);
       navigate("/");
@@ -43,11 +47,24 @@ const Dashboard = () => {
     fetchData();
   }, [navigate]);
 
+  // Simula salvar um recurso editado
+  const handleSaveEdit = () => {
+    setResources((prev) => 
+      prev.map((res) => (res.id === editingResource.id ? editingResource : res))
+    );
+    setEditingResource(null);
+  };
+
+  // Simula salvar um novo recurso
+  const handleSaveNewResource = () => {
+    setResources((prev) => [...prev, { id: Date.now(), ...newResource }]);
+    setNewResource({ name: "", status: "" });
+  };
+
   return (
     <Paper sx={{ padding: 2, margin: "20px", textAlign: "center" }}>
-      <Typography variant="h4" gutterBottom>
-        Painel de Controle
-      </Typography>
+      <Typography variant="h4" gutterBottom>Painel de Controle</Typography>
+
       {loading ? (
         <CircularProgress />
       ) : resources.length > 0 ? (
@@ -67,10 +84,19 @@ const Dashboard = () => {
                   <TableCell>{resource.status}</TableCell>
                   {userRole === "admin" && (
                     <TableCell>
-                      <Button variant="contained" color="primary" sx={{ marginRight: 1 }}>
+                      <Button 
+                        variant="contained" 
+                        color="primary" 
+                        sx={{ marginRight: 1 }} 
+                        onClick={() => setEditingResource(resource)}
+                      >
                         Editar
                       </Button>
-                      <Button variant="contained" color="secondary">
+                      <Button 
+                        variant="contained" 
+                        color="secondary" 
+                        onClick={() => setResources(resources.filter(res => res.id !== resource.id))}
+                      >
                         Remover
                       </Button>
                     </TableCell>
@@ -83,12 +109,61 @@ const Dashboard = () => {
       ) : (
         <Typography variant="h6">Nenhum recurso encontrado.</Typography>
       )}
-      {userRole === "admin" && (
-        <Button variant="contained" color="success" sx={{ marginTop: 2 }}>
-          Adicionar Recurso
-        </Button>
+
+      {/* Formulário para Editar Recurso */}
+      {editingResource && (
+        <Paper sx={{ padding: 2, margin: "20px", textAlign: "center" }}>
+          <Typography variant="h5">Editar Recurso</Typography>
+          <TextField 
+            fullWidth 
+            label="Nome" 
+            value={editingResource.name} 
+            onChange={(e) => setEditingResource({ ...editingResource, name: e.target.value })}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField 
+            fullWidth 
+            label="Status" 
+            value={editingResource.status} 
+            onChange={(e) => setEditingResource({ ...editingResource, status: e.target.value })}
+            sx={{ marginBottom: 2 }}
+          />
+          <Button variant="contained" color="primary" onClick={handleSaveEdit}>
+            Salvar Alterações
+          </Button>
+        </Paper>
       )}
-      <Button variant="contained" color="primary" sx={{ marginTop: 2, marginLeft: 2 }} onClick={() => navigate("/relatorios")}>
+
+      {/* Formulário para Adicionar Novo Recurso */}
+      {userRole === "admin" && (
+        <Paper sx={{ padding: 2, margin: "20px", textAlign: "center" }}>
+          <Typography variant="h5">Adicionar Novo Recurso</Typography>
+          <TextField 
+            fullWidth 
+            label="Nome" 
+            value={newResource.name} 
+            onChange={(e) => setNewResource({ ...newResource, name: e.target.value })}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField 
+            fullWidth 
+            label="Status" 
+            value={newResource.status} 
+            onChange={(e) => setNewResource({ ...newResource, status: e.target.value })}
+            sx={{ marginBottom: 2 }}
+          />
+          <Button variant="contained" color="success" onClick={handleSaveNewResource}>
+            Adicionar Recurso
+          </Button>
+        </Paper>
+      )}
+
+      <Button 
+        variant="contained" 
+        color="primary" 
+        sx={{ marginTop: 2, marginLeft: 2 }} 
+        onClick={() => navigate("/relatorios")}
+      >
         Ver Relatórios
       </Button>
     </Paper>
