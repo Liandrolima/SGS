@@ -1,93 +1,80 @@
 const fs = require("fs");
 const path = require("path");
-const resourcesPath = path.join(__dirname, "../models/resources.js");
+const resourcesFile = path.join(__dirname, "../models/resources.js");
+console.log("📁 Caminho do arquivo de recursos:", resourcesFile);
 
-// Carregar recursos
-let resources = require("../models/resources");
 
-// Função para salvar alterações no arquivo resources.js
-const saveResources = () => {
-  const content = `module.exports = ${JSON.stringify(resources, null, 2)};`;
-  fs.writeFileSync(resourcesPath, content, "utf8");
+// 🔥 Função para carregar sempre a versão mais recente do arquivo
+const loadResources = () => {
+  delete require.cache[require.resolve("../models/resources")]; // Remove o cache
+  const resources = require("../models/resources"); // Reimporta o arquivo atualizado
+
+  // 🔥 Garante que sempre retorna um array válido
+  return Array.isArray(resources) ? resources : [];
 };
 
-// ✅ Listar recursos com filtros e paginação
+
+// 🔥 Função para salvar os dados no arquivo
+const saveResourcesToFile = (resources) => {
+  const content = `module.exports = ${JSON.stringify(resources, null, 2)};`; // Formata os dados
+  fs.writeFileSync(resourcesFile, content, "utf8"); // Escreve no arquivo
+  console.log("✅ Arquivo resources.js atualizado com sucesso!");
+};
+
+// Listar recursos
 exports.getResources = (req, res) => {
-  console.log("📌 Recursos carregados:", resources);
-  const { status, location, page = 1, limit = 10 } = req.query;
-
-  let filteredResources = resources;
-
-  if (status) {
-    filteredResources = filteredResources.filter((r) => r.status === status);
-  }
-
-  if (location) {
-    filteredResources = filteredResources.filter((r) => r.location === location);
-  }
-
-  const start = (page - 1) * limit;
-  const end = start + parseInt(limit);
-
-  res.json(filteredResources.slice(start, end));
+  const resources = loadResources();
+  res.json(resources);
 };
 
-// ✅ Adicionar recurso e salvar no arquivo
+// Adicionar recurso
 exports.addResource = (req, res) => {
+  let resources = loadResources();
   const newResource = req.body;
 
-  // 🚨 Verificar se o número de série já existe
-  const exists = resources.some((r) => r.serialNumber === newResource.serialNumber);
-  if (exists) {
+  // Verificar se o número de série já existe
+  if (resources.some((r) => r.serialNumber === newResource.serialNumber)) {
     return res.status(400).json({ message: "Erro: Número de série já existe" });
   }
 
-  // Gerar ID único
   newResource.id = resources.length ? resources[resources.length - 1].id + 1 : 1;
-
   resources.push(newResource);
-  saveResources(); // 🔥 Salvar no arquivo
+  console.log("📢 Salvando os recursos no arquivo...");Sim
+  saveResourcesToFile(resources); // Salva no arquivo
+  console.log("✅ Recursos salvos!");
 
   res.status(201).json({ message: "Recurso adicionado com sucesso", resource: newResource });
 };
 
-// ✅ Atualizar recurso e salvar no arquivo
+// Atualizar recurso
 exports.updateResource = (req, res) => {
+  let resources = loadResources();
   const { id } = req.params;
   const updates = req.body;
 
-  const resourceIndex = resources.findIndex((r) => r.id === parseInt(id));
-
-  if (resourceIndex === -1) {
+  const index = resources.findIndex((r) => r.id === parseInt(id));
+  if (index === -1) {
     return res.status(404).json({ message: "Recurso não encontrado" });
   }
 
-  // Se o serialNumber for alterado, verificar se já existe
-  if (updates.serialNumber) {
-    const exists = resources.some((r) => r.serialNumber === updates.serialNumber && r.id !== parseInt(id));
-    if (exists) {
-      return res.status(400).json({ message: "Erro: Número de série já existe" });
-    }
-  }
+  resources[index] = { ...resources[index], ...updates };
+  saveResourcesToFile(resources); // Salva no arquivo
 
-  resources[resourceIndex] = { ...resources[resourceIndex], ...updates };
-  saveResources(); // 🔥 Salvar no arquivo
-
-  res.json({ message: "Recurso atualizado com sucesso", resource: resources[resourceIndex] });
+  res.json({ message: "Recurso atualizado com sucesso", resource: resources[index] });
 };
 
-// ✅ Remover recurso e salvar no arquivo
+// Remover recurso
 exports.deleteResource = (req, res) => {
+  let resources = loadResources();
   const { id } = req.params;
 
-  const resourceIndex = resources.findIndex((r) => r.id === parseInt(id));
-
-  if (resourceIndex === -1) {
+  const index = resources.findIndex((r) => r.id === parseInt(id));
+  if (index === -1) {
     return res.status(404).json({ message: "Recurso não encontrado" });
   }
 
-  resources.splice(resourceIndex, 1);
-  saveResources(); // 🔥 Salvar no arquivo
+  resources.splice(index, 1);
+  saveResourcesToFile(resources); // Salva no arquivo
 
   res.json({ message: "Recurso removido com sucesso" });
 };
