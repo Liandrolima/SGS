@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import { api } from "./servicos/api";
+
 import { 
   Button, Typography, Paper, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, CircularProgress, TextField 
 } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
+console.log("🛠️ API importada:", api);
 
 const Dashboard = () => {
   const [resources, setResources] = useState([]);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Painel.css";
 import { Card, CardContent, Typography } from "@mui/material";
-import { api } from "../../servicos/api"; // Importando a API
+import { api } from "../servicos/api"; // Importando a API
 
 const Painel = () => {
   const [resources, setResources] = useState([]); // Estado para armazenar os recursos

@@ -1,3 +1,4 @@
+console.log("🔥 api.js foi carregado!");
 export const api = {
     // Login do usuário
     login: async (email, password) => {
