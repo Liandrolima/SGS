@@ -61,6 +61,8 @@ export const api = {
             console.error("❌ Nenhum token encontrado para adicionar recurso!");
             return null;
         }
+
+        console.log("📤 Tentando adicionar recurso:", JSON.stringify(newResource));
   
         try {
             const response = await fetch("http://localhost:5000/api/resources", {
@@ -71,12 +73,15 @@ export const api = {
                 },
                 body: JSON.stringify(newResource),
             });
+
+            const responseData = await response.json();
+            console.log("📥 Resposta do servidor:", response.status, responseData);
   
             if (!response.ok) {
                 throw new Error("Erro ao adicionar recurso");
             }
   
-            return response.json();
+            return responseData;
         } catch (error) {
             console.error("Erro ao adicionar recurso:", error.message);
             return null;
