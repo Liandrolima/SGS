@@ -33,13 +33,19 @@ exports.addResource = (req, res) => {
   const newResource = req.body;
 
   // Verificar se o número de série já existe
-  if (resources.some((r) => r.serialNumber === newResource.serialNumber)) {
+  // Verificar se o número de série já existe, ignorando undefined
+  if (
+    newResource.serialNumber && // Só verifica se realmente houver um número de série
+    resources.some((r) => r.serialNumber === newResource.serialNumber)
+  ) {
     return res.status(400).json({ message: "Erro: Número de série já existe" });
   }
 
-  newResource.id = resources.length ? resources[resources.length - 1].id + 1 : 1;
+
+  // Definir um novo ID de forma correta
+  newResource.id = resources.length ? Math.max(...resources.map(r => r.id)) + 1 : 1;
   resources.push(newResource);
-  console.log("📢 Salvando os recursos no arquivo...");Sim
+  console.log("📢 Salvando os recursos no arquivo...");
   saveResourcesToFile(resources); // Salva no arquivo
   console.log("✅ Recursos salvos!");
 
