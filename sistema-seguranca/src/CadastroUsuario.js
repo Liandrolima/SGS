@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Typography, Paper } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
-import { api } from "./servicos/api";
+import { api } from "./servicos/api"; // 🔥 Certifique-se de que o caminho da importação está correto!
 import { useNavigate } from "react-router-dom";
 
 const CadastroUsuario = () => {
@@ -28,11 +28,17 @@ const CadastroUsuario = () => {
     }
 
     try {
+      console.log("📤 Enviando dados para cadastro:", novoUsuario);
       const response = await api.cadastrarUsuario(novoUsuario);
-      console.log("✅ Usuário cadastrado:", response);
-      setNovoUsuario({ email: "", senha: "", role: "" });
+
+      if (response) {
+        console.log("✅ Usuário cadastrado com sucesso:", response);
+        setNovoUsuario({ email: "", senha: "", role: "" });
+      } else {
+        console.error("❌ Erro ao cadastrar usuário! Resposta inválida da API.");
+      }
     } catch (error) {
-      console.error("Erro ao cadastrar usuário:", error);
+      console.error("❌ Erro ao cadastrar usuário:", error);
     }
   };
 

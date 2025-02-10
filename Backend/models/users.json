@@ -23,5 +23,10 @@
     "email": "novo@wayne.com",
     "password": "$2a$10$RM9bTj0.atFsFijX3qMe.OL4UVYuTcwYV4MZLOyWxP5fN4rvr1Ruu",
     "role": "user"
+  },
+  {
+    "email": "liandro.lima.ce@gmail.com",
+    "senha": "123456",
+    "role": "admin"
   }
 ]

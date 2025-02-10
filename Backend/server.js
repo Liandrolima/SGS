@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
+const userRoutes = require("./routes/users");
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(morgan("dev"));
 // Rotas
 app.use("/api/auth", authRoutes);
 app.use("/api/resources", resourceRoutes);
+app.use("/api/users", userRoutes);
 
 // Middleware global para erros
 app.use(errorHandler);
