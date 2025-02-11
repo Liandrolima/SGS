@@ -1,13 +1,7 @@
 module.exports = [
   {
-    "name": "Batmovel",
-    "status": "disponivel",
-    "serialNumber": "SN-548242",
-    "id": 2
-  },
-  {
     "name": "Batmoto",
-    "status": "disponivel",
+    "status": "manutenção",
     "serialNumber": "SN-87831",
     "id": 4
   },
@@ -16,5 +10,11 @@ module.exports = [
     "status": "disponivel",
     "serialNumber": "SN-692652",
     "id": 5
+  },
+  {
+    "name": "Batmovel",
+    "status": "disponivel",
+    "serialNumber": "SN-948009",
+    "id": 6
   }
 ];

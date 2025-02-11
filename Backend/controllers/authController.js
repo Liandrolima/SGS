@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const { users, saveUsers } = require("../models/users");
 
 exports.login = (req, res) => {
+  console.log("🔍 Dados recebidos no login:", req.body);
   const { email, password } = req.body;
 
   const user = users.find((u) => u.email === email && u.password === password);

@@ -7,12 +7,12 @@
   {
     "email": "manager@wayne.com",
     "password": "robin456",
-    "role": "manager"
+    "role": "admin"
   },
   {
     "email": "staff@wayne.com",
     "password": "alfred789",
-    "role": "staff"
+    "role": "gerente"
   },
   {
     "email": "usuario@wayne.com",
@@ -26,7 +26,42 @@
   },
   {
     "email": "liandro.lima.ce@gmail.com",
-    "senha": "123456",
+    "password": "123456",
+    "role": "gerente"
+  },
+  {
+    "email": "li@li",
+    "password": "123",
+    "role": "gerente"
+  },
+  {
+    "email": "usuario@example.com",
+    "password": "$2a$10$Xqz1Jq5UfV6LkYjAKvG5Ze..1CvYvV2fGpDwTtIFl5Q7XieDN1ZUm",
+    "role": "admin"
+  },
+  {
+    "email": "ge@ge",
+    "password": "123",
+    "role": "usuario"
+  },
+  {
+    "email": "wes@lima",
+    "senha": "123",
+    "role": "admin"
+  },
+  {
+    "email": "go@go",
+    "password": "123",
+    "role": "gerente"
+  },
+  {
+    "email": "ka@ka",
+    "senha": "123",
+    "role": "gerente"
+  },
+  {
+    "email": "jo@jo",
+    "senha": "246",
     "role": "admin"
   }
 ]
