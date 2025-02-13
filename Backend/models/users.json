@@ -18,55 +18,6 @@
     "email": "usuario@wayne.com",
     "password": "senha123",
     "role": "user"
-  },
-  {
-    "email": "novo@wayne.com",
-    "password": "$2a$10$RM9bTj0.atFsFijX3qMe.OL4UVYuTcwYV4MZLOyWxP5fN4rvr1Ruu",
-    "role": "user"
-  },
-  {
-    "email": "liandro.lima.ce@gmail.com",
-    "password": "123456",
-    "role": "gerente"
-  },
-  {
-    "email": "li@li",
-    "password": "123",
-    "role": "gerente"
-  },
-  {
-    "email": "usuario@example.com",
-    "password": "$2a$10$Xqz1Jq5UfV6LkYjAKvG5Ze..1CvYvV2fGpDwTtIFl5Q7XieDN1ZUm",
-    "role": "admin"
-  },
-  {
-    "email": "ge@ge",
-    "password": "123",
-    "role": "usuario"
-  },
-  {
-    "email": "wes@lima",
-    "senha": "123",
-    "role": "admin"
-  },
-  {
-    "email": "go@go",
-    "password": "123",
-    "role": "gerente"
-  },
-  {
-    "email": "lima@lima",
-    "password": "123",
-    "role": "admin"
-  },
-  {
-    "email": "ka@ka",
-    "password": "123",
-    "role": "gerente"
-  },
-  {
-    "email": "silva@silva",
-    "password": "123",
-    "role": "admin"
   }
+  
 ]
