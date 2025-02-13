@@ -8,8 +8,6 @@ import {
 import { jwtDecode } from "jwt-decode";
 import CadastroUsuario from "./CadastroUsuario";  // Importe o componente
 
-
-
 const Dashboard = () => {
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -99,9 +97,25 @@ const Dashboard = () => {
         }
     };
 
+    // Função para redirecionar para a tela de login
+    const handleLogout = () => {
+        localStorage.removeItem("token"); // Remova o token do localStorage
+        navigate("/"); // Redireciona para a página de login
+    };
+
     return (
         <Paper sx={{ padding: 2, margin: "20px", textAlign: "center" }}>
             <Typography variant="h4">Painel de Controle</Typography>
+
+            {/* Botão para voltar para a tela de login */}
+            <Button 
+                variant="outlined" 
+                color="secondary" 
+                onClick={handleLogout} 
+                sx={{ marginTop: 2 }}
+            >
+                Voltar ao Login
+            </Button>
 
             {loading ? (
                 <CircularProgress />
@@ -170,11 +184,18 @@ const Dashboard = () => {
                         onChange={(e) => setNewResource({ ...newResource, status: e.target.value })} 
                     />
                     <Button variant="contained" color="success" onClick={handleSaveNewResource}>Adicionar</Button>
-                    
                 </Paper>
             )}
             {(userRole === "admin" || userRole === "gerente") && <CadastroUsuario />}
-
+            {/* Botão "Voltar ao Login" visível para TODOS os usuários */}
+            <Button 
+                variant="outlined" 
+                color="secondary" 
+                onClick={handleLogout} 
+                sx={{ marginTop: 2 }}
+            >
+                Voltar ao Login
+            </Button>
         </Paper>
     );
 };

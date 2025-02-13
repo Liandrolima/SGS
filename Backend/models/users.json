@@ -55,13 +55,18 @@
     "role": "gerente"
   },
   {
+    "email": "lima@lima",
+    "password": "123",
+    "role": "admin"
+  },
+  {
     "email": "ka@ka",
-    "senha": "123",
+    "password": "123",
     "role": "gerente"
   },
   {
-    "email": "jo@jo",
-    "senha": "246",
+    "email": "silva@silva",
+    "password": "123",
     "role": "admin"
   }
 ]

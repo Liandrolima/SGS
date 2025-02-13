@@ -146,21 +146,24 @@ export const api = {
         }
     },
 
-    // 🟢 Cadastrar novo usuário
-    cadastrarUsuario: async (novoUsuario) => {
-        console.log("📤 Tentando cadastrar usuário:", JSON.stringify(novoUsuario));
+    // 🟢 Cadastrar novo usuário (Corrigido para usar "password" em vez de "senha")
+    cadastrarUsuario: async ({ email, password, role }) => {
+        const usuarioFormatado = { email, password, role }; // 🔥 Garante que enviamos "password"
+        
+        console.log("📤 Tentando cadastrar usuário:", JSON.stringify(usuarioFormatado));
 
         try {
-            const response = await fetch("http://localhost:5000/api/users", { // 🔥 Certifique-se de que esta URL está correta!
+            const response = await fetch("http://localhost:5000/api/users", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(novoUsuario),
+                body: JSON.stringify(usuarioFormatado),
             });
 
             if (!response.ok) {
-                throw new Error(`Erro ao cadastrar usuário: ${response.statusText}`);
+                const errorText = await response.text();
+                throw new Error(`Erro ao cadastrar usuário: ${response.statusText} - ${errorText}`);
             }
 
             const data = await response.json();

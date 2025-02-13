@@ -5,7 +5,7 @@ import { api } from "./servicos/api"; // 🔥 Certifique-se de que o caminho da 
 import { useNavigate } from "react-router-dom";
 
 const CadastroUsuario = () => {
-  const [novoUsuario, setNovoUsuario] = useState({ email: "", senha: "", role: "" });
+  const [novoUsuario, setNovoUsuario] = useState({ email: "", password: "", role: "" });
   const [userRole, setUserRole] = useState(null);
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const CadastroUsuario = () => {
   }, [navigate]);
 
   const handleCadastro = async () => {
-    if (!novoUsuario.email || !novoUsuario.senha || !novoUsuario.role) {
+    if (!novoUsuario.email || !novoUsuario.password || !novoUsuario.role) {
       console.error("Erro: Todos os campos são obrigatórios!");
       return;
     }
@@ -33,7 +33,7 @@ const CadastroUsuario = () => {
 
       if (response) {
         console.log("✅ Usuário cadastrado com sucesso:", response);
-        setNovoUsuario({ email: "", senha: "", role: "" });
+        setNovoUsuario({ email: "", password: "", role: "" });
       } else {
         console.error("❌ Erro ao cadastrar usuário! Resposta inválida da API.");
       }
@@ -59,10 +59,10 @@ const CadastroUsuario = () => {
       />
       <TextField
         fullWidth
-        label="Senha"
+        label="password"
         type="password"
-        value={novoUsuario.senha}
-        onChange={(e) => setNovoUsuario({ ...novoUsuario, senha: e.target.value })}
+        value={novoUsuario.password}
+        onChange={(e) => setNovoUsuario({ ...novoUsuario, password: e.target.value })}
         sx={{ marginBottom: 2 }}
       />
       <TextField

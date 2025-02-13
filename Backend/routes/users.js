@@ -19,9 +19,11 @@ const salvarUsuarios = (usuarios) => {
 
 // Rota para cadastrar um usuário
 router.post("/", (req, res) => {
-    const { email, senha, role } = req.body;
+    console.log("📥 Dados recebidos para cadastro:", req.body); // 🟢 Debug para verificar a requisição
 
-    if (!email || !senha || !role) {
+    const { email, password, role } = req.body; // 🔥 Alterado de "senha" para "password"
+
+    if (!email || !password || !role) {
         return res.status(400).json({ message: "Todos os campos são obrigatórios!" });
     }
 
@@ -33,7 +35,7 @@ router.post("/", (req, res) => {
     }
 
     // Adiciona o novo usuário
-    const newUser = { email, senha, role };
+    const newUser = { email, password, role }; // 🔥 Mantendo "password" para consistência
     users.push(newUser);
     salvarUsuarios(users);
 

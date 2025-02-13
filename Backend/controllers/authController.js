@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const { users, saveUsers } = require("../models/users");
 
 exports.login = (req, res) => {
-  console.log("🔍 Dados recebidos no login:", req.body);
   const { email, password } = req.body;
 
   const user = users.find((u) => u.email === email && u.password === password);
@@ -28,7 +27,9 @@ exports.login = (req, res) => {
 
 // Adicionar novo usuário
 exports.addUser = (req, res) => {
+  console.log("📥 Dados recebidos para cadastro:", req.body);
   const { email, password, role } = req.body;
+  console.log("📥 Dados recebidos para cadastro:", req.body);
 
   // Verificar se já existe um usuário com o mesmo e-mail
   if (users.some((u) => u.email === email)) {
