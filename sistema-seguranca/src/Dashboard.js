@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from "react";  
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "./servicos/api";
 import { 
     Button, Typography, Paper, Table, TableBody, TableCell, 
-    TableContainer, TableHead, TableRow, CircularProgress, TextField 
+    TableContainer, TableHead, TableRow, CircularProgress, TextField, 
+    Grid, Card, CardContent 
 } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
-import CadastroUsuario from "./CadastroUsuario";  // Importe o componente
+import { 
+    ResponsiveContainer, BarChart, XAxis, YAxis, Tooltip, Legend, Bar, 
+    PieChart, Pie, Cell 
+} from "recharts";
+
+import CadastroUsuario from "./CadastroUsuario";
+
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const Dashboard = () => {
     const [resources, setResources] = useState([]);
@@ -14,7 +22,10 @@ const Dashboard = () => {
     const [userRole, setUserRole] = useState(null);
     const [editingResource, setEditingResource] = useState(null);
     const [newResource, setNewResource] = useState({ name: "", status: "" });
+    const [accessStats, setAccessStats] = useState({ approved: 0, denied: 0 });
+    const [alerts, setAlerts] = useState([]);
     const navigate = useNavigate();
+
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -187,6 +198,43 @@ const Dashboard = () => {
                 </Paper>
             )}
             {(userRole === "admin" || userRole === "gerente") && <CadastroUsuario />}
+            <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                <Grid item xs={12} md={6}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6">Acessos Restritos</Typography>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <BarChart data={[{ name: "Acessos", ...accessStats }]}> 
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Bar dataKey="approved" fill="#4CAF50" name="Aprovados" />
+                                    <Bar dataKey="denied" fill="#F44336" name="Negados" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6">Status dos Recursos</Typography>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <PieChart>
+                                    <Pie data={resources} dataKey="count" nameKey="status" cx="50%" cy="50%" outerRadius={80} label>
+                                        {resources.map((_, index) => (
+                                            <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                    <Legend />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
             {/* Botão "Voltar ao Login" visível para TODOS os usuários */}
             <Button 
                 variant="outlined" 

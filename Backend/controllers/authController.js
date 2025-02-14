@@ -6,7 +6,10 @@ const { users, saveUsers } = require("../models/users");
 exports.login = (req, res) => {
   const { email, password } = req.body;
 
-  const user = users.find((u) => u.email === email && u.password === password);
+  delete require.cache[require.resolve("../models/users")]; // 🔥 Remove cache do Node.js
+  const { users } = require("../models/users"); // 🔄 Recarrega os usuários do arquivo JSON
+  const user = users.find((u) => u.email === email);
+  
 
   if (!user) {
     return res.status(401).json({ message: "Credenciais inválidas" });

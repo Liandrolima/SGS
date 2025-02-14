@@ -13,11 +13,6 @@
     "email": "staff@wayne.com",
     "password": "alfred789",
     "role": "gerente"
-  },
-  {
-    "email": "usuario@wayne.com",
-    "password": "senha123",
-    "role": "user"
   }
   
 ]
