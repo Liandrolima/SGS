@@ -1,20 +1,20 @@
 module.exports = [
   {
-    "name": "Batcaverna",
+    "name": "Batmovel",
     "status": "disponível",
-    "serialNumber": "SN-539241",
-    "id": 11
+    "serialNumber": "SN-80529",
+    "id": 14
   },
   {
-    "name": "Batteclado",
+    "name": "Batcaverna",
     "status": "disponível",
-    "serialNumber": "SN-685343",
-    "id": 12
+    "serialNumber": "SN-595977",
+    "id": 15
   },
   {
     "name": "Batmoto",
     "status": "manutenção",
-    "serialNumber": "SN-754550",
-    "id": 13
+    "serialNumber": "SN-513950",
+    "id": 16
   }
 ];

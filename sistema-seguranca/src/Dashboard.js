@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import axios from 'axios';  // Adicione esta linha no início do seu arquivo
 import { useNavigate } from "react-router-dom";
 import { api } from "./servicos/api";
 import { 
     Button, Typography, Paper, Table, TableBody, TableCell, 
     TableContainer, TableHead, TableRow, CircularProgress, TextField, 
-    Grid, Card, CardContent 
+    Grid, Card, CardContent, Snackbar, Alert 
 } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
 import { 
@@ -14,7 +15,7 @@ import {
 
 import CadastroUsuario from "./CadastroUsuario";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = ["#ff0000", "#00ff00", "#0000ff", "#ff00ff"]; 
 
 const Dashboard = () => {
     const [resources, setResources] = useState([]);
@@ -23,12 +24,15 @@ const Dashboard = () => {
     const [editingResource, setEditingResource] = useState(null);
     const [newResource, setNewResource] = useState({ name: "", status: "" });
     const [accessStats, setAccessStats] = useState({ approved: 0, denied: 0 });
+    const [latestActivities, setLatestActivities] = useState([]);
     const [alerts, setAlerts] = useState([]);
+    const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
     const navigate = useNavigate();
 
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+        console.log("Token encontrado:", token);
         if (!token) return navigate("/");
 
         try {
@@ -48,6 +52,28 @@ const Dashboard = () => {
             }
         })();
     }, [navigate]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            // Obtém as atividades
+            const activitiesRes = await axios.get('/api/activities');
+            console.log("Atividades recebidas:", activitiesRes.data); // Adicione esse log para verificar os dados
+            setLatestActivities(activitiesRes.data); // Armazena as atividades
+    
+            // Obtém os alertas
+            const alertsRes = await axios.get('/api/alerts');
+            console.log("Alertas recebidos:", alertsRes.data); // Verifica se os alertas estão sendo retornados
+            setAlerts(alertsRes.data); // Armazena os alertas
+          } catch (error) {
+            console.error('Error fetching activities and alerts', error);
+          }
+        };
+    
+        fetchData();
+      }, []); // Carregar apenas uma vez quando o componente for montado
+    
+    
 
     const handleSaveEdit = async () => {
         if (!editingResource || !editingResource.id) {
@@ -114,6 +140,14 @@ const Dashboard = () => {
         navigate("/"); // Redireciona para a página de login
     };
 
+    const statusCounts = resources.reduce((acc, resource) => {
+        acc[resource.status] = (acc[resource.status] || 0) + 1;
+        return acc;
+    }, {});
+    const pieData = Object.entries(statusCounts).map(([status, count]) => ({ status, count }));
+
+    const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+
     return (
         <Paper sx={{ padding: 2, margin: "20px", textAlign: "center" }}>
             <Typography variant="h4">Painel de Controle</Typography>
@@ -127,6 +161,12 @@ const Dashboard = () => {
             >
                 Voltar ao Login
             </Button>
+
+            <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
 
             {loading ? (
                 <CircularProgress />
@@ -204,7 +244,7 @@ const Dashboard = () => {
                         <CardContent>
                             <Typography variant="h6">Acessos Restritos</Typography>
                             <ResponsiveContainer width="100%" height={250}>
-                                <BarChart data={[{ name: "Acessos", ...accessStats }]}> 
+                                <BarChart data={[{ name: "Acessos", ...accessStats, ...setAccessStats }]}> 
                                     <XAxis dataKey="name" />
                                     <YAxis />
                                     <Tooltip />
@@ -227,6 +267,11 @@ const Dashboard = () => {
                                             <Cell key={index} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
+                                    <Pie data={pieData} dataKey="count" nameKey="status" cx="50%" cy="50%" outerRadius={80} label>
+                                        {pieData.map((_, index) => (
+                                            <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
                                     <Tooltip />
                                     <Legend />
                                 </PieChart>
@@ -235,6 +280,55 @@ const Dashboard = () => {
                     </Card>
                 </Grid>
             </Grid>
+            {/* Gráficos */}
+           
+           {/* Últimas Atividades */}
+            <Typography variant="h5" sx={{ marginTop: 4 }}>
+            Últimas Atividades
+            </Typography>
+            <ul>
+            {latestActivities.map((activity) => (
+                <li key={activity.id}>
+                {activity.message} - <span style={{ fontStyle: 'italic', color: 'gray' }}>
+                    {activity.timestamp ? new Date(activity.timestamp).toLocaleString('pt-BR', { timeZoneName: 'short' }) : "Sem horário"}
+                </span>
+                </li>
+            ))}
+            </ul>
+
+            {/* Alertas de Segurança */}
+            <Typography variant="h5" sx={{ marginTop: 4 }}>
+            🚨 Alertas de Segurança
+            </Typography>
+            {alerts.length === 0 ? (
+            <Typography color="gray">Nenhum alerta no momento.</Typography>
+            ) : (
+            <div style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '8px', marginBottom: '20px' }}>
+                {alerts.map((alert) => {
+                let alertColor = "green"; // Default (sem gravidade)
+                if (alert.level === "Alta") alertColor = "red";
+                if (alert.level === "Média") alertColor = "orange";
+
+                return (
+                    <Typography
+                    key={alert.id}
+                    sx={{
+                        backgroundColor: alertColor,
+                        color: 'white',
+                        padding: '8px',
+                        borderRadius: '5px',
+                        marginBottom: '5px'
+                    }}
+                    >
+                    {alert.message} - <strong>{alert.level}</strong>
+                    - <span style={{ fontStyle: 'italic' }}>
+                        {alert.timestamp ? new Date(alert.timestamp).toLocaleString('pt-BR', { timeZoneName: 'short' }) : "Sem horário"}
+                    </span>
+                    </Typography>
+                );
+                })}
+            </div>
+            )}
             {/* Botão "Voltar ao Login" visível para TODOS os usuários */}
             <Button 
                 variant="outlined" 

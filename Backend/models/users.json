@@ -13,6 +13,10 @@
     "email": "staff@wayne.com",
     "password": "alfred789",
     "role": "gerente"
+  },
+  {
+    "email": "ka@ka",
+    "password": "123",
+    "role": "admin"
   }
-  
 ]

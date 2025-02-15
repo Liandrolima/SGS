@@ -146,9 +146,9 @@ export const api = {
         }
     },
 
-    // 🟢 Cadastrar novo usuário (Corrigido para usar "password" em vez de "senha")
+    // 🟢 Cadastrar novo usuário
     cadastrarUsuario: async ({ email, password, role }) => {
-        const usuarioFormatado = { email, password, role }; // 🔥 Garante que enviamos "password"
+        const usuarioFormatado = { email, password, role };
         
         console.log("📤 Tentando cadastrar usuário:", JSON.stringify(usuarioFormatado));
 
@@ -172,6 +172,62 @@ export const api = {
         } catch (error) {
             console.error("❌ Erro ao cadastrar usuário:", error);
             return null;
+        }
+    },
+
+    // 🟢 Obter atividades recentes
+    getActivities: async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("❌ Nenhum token encontrado no localStorage!");
+            return null;
+        }
+
+        try {
+            const response = await fetch("http://localhost:5000/api/activities", {
+                method: "GET",
+                headers: {
+                    "Cache-Control": "no-cache",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao carregar atividades");
+            }
+
+            return response.json();
+        } catch (error) {
+            console.error("Erro ao obter atividades:", error);
+            return [];
+        }
+    },
+
+    // 🟢 Obter alertas de segurança
+    getSecurityAlerts: async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("❌ Nenhum token encontrado no localStorage!");
+            return null;
+        }
+
+        try {
+            const response = await fetch("http://localhost:5000/api/alerts", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao carregar alertas de segurança");
+            }
+
+            return response.json(); // Retorna os alertas de segurança
+        } catch (error) {
+            console.error("❌ Erro ao buscar alertas de segurança:", error.message);
+            return [];
         }
     },
 };
