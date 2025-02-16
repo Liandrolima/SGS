@@ -4,6 +4,17 @@ let alerts = [];
 let inactiveResources = {};
 let pendingMaintenances = {};
 
+// Testando dados temporários para recursos inativos e manutenções pendentes
+inactiveResources = {
+  "Recurso1": { lastUsed: new Date("2023-12-01") },
+  "Recurso2": { lastUsed: new Date("2024-01-01") },
+};
+
+pendingMaintenances = {
+  "Servidor1": { lastMaintenance: new Date("2023-11-01") },
+  "Servidor2": { lastMaintenance: new Date("2023-12-01") },
+};
+
 function generateDynamicAlerts() {
   alerts = []; // Resetar os alertas para evitar duplicação
 
@@ -22,6 +33,8 @@ function generateDynamicAlerts() {
       registerAlert(`Manutenção pendente para ${server}`, "Alta");
     }
   });
+
+  console.log("Alertas gerados:", alerts);  // Verifique os alertas gerados
 }
 
 function registerAlert(message, level) {

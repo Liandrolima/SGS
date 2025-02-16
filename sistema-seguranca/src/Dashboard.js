@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';  // Adicione esta linha no início do seu arquivo
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { api } from "./servicos/api";
 import { 
@@ -12,6 +12,8 @@ import {
     ResponsiveContainer, BarChart, XAxis, YAxis, Tooltip, Legend, Bar, 
     PieChart, Pie, Cell 
 } from "recharts";
+import { Box } from '@mui/material';
+
 
 import CadastroUsuario from "./CadastroUsuario";
 
@@ -26,19 +28,48 @@ const Dashboard = () => {
     const [accessStats, setAccessStats] = useState({ approved: 0, denied: 0 });
     const [latestActivities, setLatestActivities] = useState([]);
     const [alerts, setAlerts] = useState([]);
+    const [usageStats] = useState([]);
+    const [userActivityStats] = useState([]);
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
 
+    const fetchData = async () => {
+        try {
+          const alertasResponse = await axios.get('http://localhost:5000/api/alerts', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          });
+          console.log('Alertas recebidos:', alertasResponse.data);
+          setAlerts(alertasResponse.data);
+      
+          const atividadesResponse = await axios.get('http://localhost:5000/api/activities', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          });
+          console.log('Atividades recebidas:', atividadesResponse.data);
+          setLatestActivities(atividadesResponse.data);
+        } catch (error) {
+          console.error('Erro ao buscar alertas ou atividades:', error);
+        }
+      };
+      
+      useEffect(() => {
+        fetchData(); // Chama a função externa
+      }, [token]); // Use 'token' como dependência estável
+      
+      
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        console.log("Token encontrado:", token);
         if (!token) return navigate("/");
 
         try {
             setUserRole(jwtDecode(token).role);
         } catch {
-            return navigate("/");
+            return navigate("/"); 
         }
 
         (async () => {
@@ -52,28 +83,6 @@ const Dashboard = () => {
             }
         })();
     }, [navigate]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            // Obtém as atividades
-            const activitiesRes = await axios.get('/api/activities');
-            console.log("Atividades recebidas:", activitiesRes.data); // Adicione esse log para verificar os dados
-            setLatestActivities(activitiesRes.data); // Armazena as atividades
-    
-            // Obtém os alertas
-            const alertsRes = await axios.get('/api/alerts');
-            console.log("Alertas recebidos:", alertsRes.data); // Verifica se os alertas estão sendo retornados
-            setAlerts(alertsRes.data); // Armazena os alertas
-          } catch (error) {
-            console.error('Error fetching activities and alerts', error);
-          }
-        };
-    
-        fetchData();
-      }, []); // Carregar apenas uma vez quando o componente for montado
-    
-    
 
     const handleSaveEdit = async () => {
         if (!editingResource || !editingResource.id) {
@@ -140,14 +149,42 @@ const Dashboard = () => {
         navigate("/"); // Redireciona para a página de login
     };
 
+    // Agrupa recursos por status
     const statusCounts = resources.reduce((acc, resource) => {
-        acc[resource.status] = (acc[resource.status] || 0) + 1;
+        if (!acc[resource.status]) acc[resource.status] = [];
+        acc[resource.status].push(resource.name);
         return acc;
     }, {});
-    const pieData = Object.entries(statusCounts).map(([status, count]) => ({ status, count }));
+
+    // Prepara os dados para o gráfico (status e os nomes dos recursos)
+    const pieData = Object.entries(statusCounts).map(([status, names]) => ({
+        status,
+        count: names.length,
+        resources: names.join(", "), // Lista de recursos com esse status
+    }));
 
     const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
+    const getMaintenanceDateStatus = (maintenanceDate) => {
+        if (!maintenanceDate) return { color: 'white', text: 'Sem manutenção' };
+    
+        const currentDate = new Date();
+        const maintenanceDateObj = new Date(maintenanceDate);
+    
+        // Calcula a diferença em milissegundos
+        const timeDifference = currentDate - maintenanceDateObj;
+    
+        // Uma semana em milissegundos
+        const oneWeekInMillis = 7 * 24 * 60 * 60 * 1000; // 7 dias em milissegundos
+    
+        if (timeDifference <= oneWeekInMillis) {
+            return { color: 'yellow', text: 'Prazo de manutenção acabando' }; // Amarelo se a manutenção for até 1 semana
+        } else {
+            return { color: 'red', text: 'Prazo esgotado' }; // Vermelho se for mais de 1 semana
+        }
+    };
+    
+    
     return (
         <Paper sx={{ padding: 2, margin: "20px", textAlign: "center" }}>
             <Typography variant="h4">Painel de Controle</Typography>
@@ -209,35 +246,86 @@ const Dashboard = () => {
                         value={editingResource.name} 
                         onChange={(e) => setEditingResource({ ...editingResource, name: e.target.value })} 
                     />
-                    <TextField 
-                        fullWidth 
-                        label="Status" 
-                        value={editingResource.status} 
-                        onChange={(e) => setEditingResource({ ...editingResource, status: e.target.value })} 
-                    />
+                    
+                    <TextField
+                        fullWidth
+                        label="Status"
+                        select
+                        value={editingResource.status}
+                        onChange={(e) => {
+                            const newStatus = e.target.value;
+                            // Se o status for "Em manutenção", preenche a data de início
+                            const newResource = { ...editingResource, status: newStatus };
+                            if (newStatus === "Em manutenção" && !newResource.maintenanceDate) {
+                                newResource.maintenanceDate = new Date().toLocaleString();
+                            }
+                            setEditingResource(newResource);
+                        }}
+                        SelectProps={{
+                            native: true,
+                        }}
+                    >
+                        <option value="Disponível">Disponível</option>
+                        <option value="Em manutenção">Em manutenção</option>
+                        <option value="Fora de uso">Fora de uso</option>
+                    </TextField>
+                
+                    {editingResource.status === "Em manutenção" && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
+                            <TextField
+                                fullWidth
+                                label="Data de Início da Manutenção"
+                                value={editingResource.maintenanceDate || ''}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                                sx={{
+                                    marginRight: 2,
+                                    backgroundColor: getMaintenanceDateStatus(editingResource.maintenanceDate).color, // Cor de fundo
+                                    flexGrow: 1,
+                                }}
+                            />
+                            <Typography variant="body1" sx={{ color: getMaintenanceDateStatus(editingResource.maintenanceDate).color }}>
+                                {getMaintenanceDateStatus(editingResource.maintenanceDate).text} 
+                            </Typography>
+                        </Box>
+                    )}
+                
                     <Button variant="contained" color="primary" onClick={handleSaveEdit}>Salvar Alterações</Button>
-                </Paper>
+                </Paper>               
+                
+                )}
+
+                {userRole === "admin" && (
+                    <Paper sx={{ padding: 2, margin: "20px" }}>
+                        <Typography variant="h5">Adicionar Novo Recurso</Typography>
+                        <TextField 
+                            fullWidth 
+                            label="Nome" 
+                            value={newResource.name} 
+                            onChange={(e) => setNewResource({ ...newResource, name: e.target.value })} 
+                        />
+                        
+                        <TextField 
+                            fullWidth 
+                            label="Status"
+                            select
+                            value={newResource.status}
+                            onChange={(e) => setNewResource({ ...newResource, status: e.target.value })}
+                            SelectProps={{
+                                native: true,
+                            }}
+                        >
+                            <option value="Disponível">Disponível</option>
+                            <option value="Em manutenção">Em manutenção</option>
+                            <option value="Fora de uso">Fora de uso</option>
+                        </TextField>
+                        <Button variant="contained" color="success" onClick={handleSaveNewResource}>Adicionar</Button>
+                    </Paper>
             )}
 
-            {userRole === "admin" && (
-                <Paper sx={{ padding: 2, margin: "20px" }}>
-                    <Typography variant="h5">Adicionar Novo Recurso</Typography>
-                    <TextField 
-                        fullWidth 
-                        label="Nome" 
-                        value={newResource.name} 
-                        onChange={(e) => setNewResource({ ...newResource, name: e.target.value })} 
-                    />
-                    <TextField 
-                        fullWidth 
-                        label="Status" 
-                        value={newResource.status} 
-                        onChange={(e) => setNewResource({ ...newResource, status: e.target.value })} 
-                    />
-                    <Button variant="contained" color="success" onClick={handleSaveNewResource}>Adicionar</Button>
-                </Paper>
-            )}
             {(userRole === "admin" || userRole === "gerente") && <CadastroUsuario />}
+
             <Grid container spacing={2} sx={{ marginTop: 2 }}>
                 <Grid item xs={12} md={6}>
                     <Card>
@@ -260,32 +348,90 @@ const Dashboard = () => {
                     <Card>
                         <CardContent>
                             <Typography variant="h6">Status dos Recursos</Typography>
-                            <ResponsiveContainer width="100%" height={250}>
-                                <PieChart>
-                                    <Pie data={resources} dataKey="count" nameKey="status" cx="50%" cy="50%" outerRadius={80} label>
-                                        {resources.map((_, index) => (
-                                            <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Pie data={pieData} dataKey="count" nameKey="status" cx="50%" cy="50%" outerRadius={80} label>
-                                        {pieData.map((_, index) => (
-                                            <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                    <Legend />
-                                </PieChart>
-                            </ResponsiveContainer>
+                            <Paper sx={{ padding: 2 }}>
+                        <Grid container spacing={3} sx={{ justifyContent: "center", alignItems: "center" }}>
+                            {/* Gráfico de Pizza */}
+                            <Grid item xs={12} md={6}>
+                                <ResponsiveContainer width="100%" height={250}>
+                                    <PieChart>
+                                        <Pie 
+                                            data={pieData} 
+                                            dataKey="count" 
+                                            nameKey="status" 
+                                            cx="50%" 
+                                            cy="50%" 
+                                            outerRadius={80} 
+                                        >
+                                            {pieData.map((_, index) => (
+                                                <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                        <Legend />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </Grid>
+
+                            {/* Lista de Recursos ao Lado */}
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="h6">Recursos por Status</Typography>
+                                <div>
+                                    {pieData.map((item, index) => (
+                                        <div key={index} style={{ marginBottom: "10px" }}>
+                                            <Typography variant="body1" style={{ fontWeight: "bold", color: COLORS[index % COLORS.length] }}>
+                                                {item.status}:
+                                            </Typography>
+                                            <ul style={{ paddingLeft: "20px" }}>
+                                                {item.resources.split(", ").map((resourceName, i) => (
+                                                    <li key={i} style={{ color: "#000000" }}>
+                                                        {resourceName}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Grid>
+                        </Grid>
+                    </Paper>
                         </CardContent>
                     </Card>
                 </Grid>
             </Grid>
-            {/* Gráficos */}
-           
-           {/* Últimas Atividades */}
-            <Typography variant="h5" sx={{ marginTop: 4 }}>
-            Últimas Atividades
-            </Typography>
+
+            <Typography variant="h5" sx={{ marginTop: 4 }}>Recursos Mais Utilizados</Typography>
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Recurso</TableCell>
+                            <TableCell>Quantidade de Uso</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {usageStats.map((item, index) => (
+                            <TableRow key={index}>
+                                <TableCell>{item.resource}</TableCell>
+                                <TableCell>{item.usageCount}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+            <Typography variant="h5" sx={{ marginTop: 4 }}>Atividades por Tipo de Usuário</Typography>
+            <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={userActivityStats}>
+                    <XAxis dataKey="userType" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="activityCount" fill="#8884d8" name="Atividades" />
+                </BarChart>
+            </ResponsiveContainer>
+
+            {/* Últimas Atividades */}
+            <Typography variant="h5" sx={{ marginTop: 4 }}>Últimas Atividades</Typography>
             <ul>
             {latestActivities.map((activity) => (
                 <li key={activity.id}>

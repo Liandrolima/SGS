@@ -18,5 +18,15 @@
     "email": "ka@ka",
     "password": "123",
     "role": "admin"
+  },
+  {
+    "email": "go@go",
+    "password": "123",
+    "role": "usuário"
+  },
+  {
+    "email": "pedro@pr",
+    "password": "123",
+    "role": "admin"
   }
 ]

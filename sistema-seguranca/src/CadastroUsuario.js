@@ -58,20 +58,30 @@ const CadastroUsuario = () => {
         sx={{ marginBottom: 2 }}
       />
       <TextField
-        fullWidth
-        label="password"
-        type="password"
-        value={novoUsuario.password}
-        onChange={(e) => setNovoUsuario({ ...novoUsuario, password: e.target.value })}
-        sx={{ marginBottom: 2 }}
-      />
-      <TextField
-        fullWidth
-        label="Função (admin, gerente, usuário)"
-        value={novoUsuario.role}
-        onChange={(e) => setNovoUsuario({ ...novoUsuario, role: e.target.value })}
-        sx={{ marginBottom: 2 }}
-      />
+  fullWidth
+  label="Password"
+  type="password"
+  value={novoUsuario.password}
+  onChange={(e) => setNovoUsuario({ ...novoUsuario, password: e.target.value })}
+  sx={{ marginBottom: 2 }}
+/>
+
+<TextField
+  fullWidth
+  label="Função (admin, gerente, usuário)"
+  value={novoUsuario.role}
+  onChange={(e) => setNovoUsuario({ ...novoUsuario, role: e.target.value })}
+  select
+  SelectProps={{
+    native: true,
+  }}
+  sx={{ marginBottom: 2 }}
+>
+  <option value="Administrador">Administrador(a)</option>
+  <option value="Gerente">Gerente</option>
+  <option value="Funcionario">Funcionário(a)</option>
+</TextField>
+
       <Button variant="contained" color="success" onClick={handleCadastro}>
         Cadastrar
       </Button>

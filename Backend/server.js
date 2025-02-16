@@ -40,8 +40,8 @@ app.get("/api/activities", (req, res) => {
 // 🔴 Rota para obter alertas de segurança
 app.get("/api/alerts", (req, res) => {
   console.log("Rota de alertas acessada");
-  generateDynamicAlerts(); // Gera alertas atualizados antes de enviar a resposta
-  res.json(alerts);
+  generateDynamicAlerts(); // Gera alertas atualizados
+  res.json(alerts); // Retorna os alertas gerados
 });
 
 // 🟡 Rota para simular um login (e registrar tentativas de acesso negadas)
@@ -52,13 +52,13 @@ app.post("/api/login", (req, res) => {
   if (password !== "senhaCorreta") {
     failedLoginAttempts++;
     if (failedLoginAttempts >= 3) { 
-      registerAlert("Múltiplas tentativas de acesso negadas", "Alta");
+      registerAlert("Múltiplas tentativas de acesso negadas", "Alta"); // Registra um alerta de segurança
       failedLoginAttempts = 0; // Zera o contador após gerar um alerta
     }
     return res.status(401).json({ message: "Acesso negado" });
   }
 
-  registerActivity(`${email} fez login no sistema`);
+  registerActivity(`${email} fez login no sistema`); // Registra a atividade de login
   res.json({ message: "Login bem-sucedido" });
 });
 
@@ -68,7 +68,7 @@ app.post("/api/activities", (req, res) => {
   if (!message) {
     return res.status(400).json({ error: "A mensagem da atividade é obrigatória" });
   }
-  registerActivity(message);
+  registerActivity(message); // Registra a atividade
   res.status(201).json({ success: true });
 });
 
