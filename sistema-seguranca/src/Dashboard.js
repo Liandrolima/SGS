@@ -249,7 +249,19 @@ const Dashboard = () => {
                     <option value="Disponível">Disponível</option>
                     <option value="Em manutenção">Em manutenção</option>
                     <option value="Fora de uso">Fora de uso</option>
-                </TextField>    
+                </TextField>
+                {/* Exibe a data em que o recurso ficou disponível */}  
+                {editingResource.status === "Disponível" && (
+                    <TextField
+                        fullWidth
+                        label="Data em que o recurso ficou disponível"
+                        value={editingResource.maintenanceDate || new Date().toLocaleString()}
+                        InputProps={{
+                            readOnly: true,
+                        }}
+                        sx={{ marginTop: 2, backgroundColor: 'green'}}
+                    />
+                )}              
                 {/* Exibe a data de início da manutenção e o status */}
                 {editingResource.status === "Em manutenção" && (
                     <Box sx={{
@@ -287,7 +299,19 @@ const Dashboard = () => {
                           {maintenanceStatus.text}
                         </Typography>
                       </Box>                   
-                )}    
+                )}  
+                 {/* Exibe a data em que o recurso ficou Fora de uso */}  
+                 {editingResource.status === "Fora de uso" && (
+                    <TextField
+                        fullWidth
+                        label="Data em que o recurso Fora de uso"
+                        value={editingResource.maintenanceDate || new Date().toLocaleString()}
+                        InputProps={{
+                            readOnly: true,
+                        }}
+                        sx={{ marginTop: 2, backgroundColor: 'red'}}
+                    />
+                )}              
                 {/* Botão para salvar as alterações */}
                 <Button variant="contained" color="primary" onClick={handleSaveEdit}>Salvar Alterações</Button>
                 </Paper>                     
@@ -326,7 +350,19 @@ const Dashboard = () => {
                             <option value="Disponível">Disponível</option>
                             <option value="Em manutenção">Em manutenção</option>
                             <option value="Fora de uso">Fora de uso</option>
-                        </TextField>                    
+                        </TextField>
+                        {/* Exibe a data em que o novo recurso ficou disponível */}  
+                        {newResource.status === "Disponível" && (
+                            <TextField
+                                fullWidth
+                                label="Data em que o novo recurso ficou disponível"
+                                value={newResource.maintenanceDate || new Date().toLocaleString()}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                                sx={{ marginTop: 2, backgroundColor: 'green'}}
+                            />
+                        )}                          
                         {/* Exibe a data de início da manutenção e o status, se o status for "Em manutenção" */}
                         {newResource.status === "Em manutenção" && (
                             <Box sx={{
@@ -365,7 +401,18 @@ const Dashboard = () => {
                                 </Typography>
                             </Box>
                         )}
-                    
+                        {/* Exibe a data em que o novo recurso ficou Fora de uso */}  
+                        {newResource.status === "Fora de uso" && (
+                            <TextField
+                                fullWidth
+                                label="Data em que o novo recurso ficou Fora de uso"
+                                value={newResource.maintenanceDate || new Date().toLocaleString()}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                                sx={{ marginTop: 2, backgroundColor: 'red'}}
+                            />
+                        )}                              
                         {/* Botão para adicionar o novo recurso */}
                         <Button variant="contained" color="success" onClick={handleSaveNewResource}>Adicionar</Button>
                     </Paper>                

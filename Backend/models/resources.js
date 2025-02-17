@@ -42,9 +42,37 @@ module.exports = [
   },
   {
     "name": "Batteclado",
-    "status": "Fora de uso",
+    "status": "Disponível",
     "maintenanceDate": null,
     "serialNumber": "SN-655751",
     "id": 24
+  },
+  {
+    "name": "Tablet",
+    "status": "Disponível",
+    "maintenanceDate": null,
+    "serialNumber": "SN-612779",
+    "id": 25
+  },
+  {
+    "name": "Projetor",
+    "status": "Disponível",
+    "serialNumber": "SN-382879",
+    "maintenanceDate": null,
+    "id": 26
+  },
+  {
+    "name": "Tablet",
+    "status": "Em manutenção",
+    "maintenanceDate": "2025-02-17T15:51:31.888Z",
+    "serialNumber": "SN-904876",
+    "id": 27
+  },
+  {
+    "name": "Veículo(pwe8292)",
+    "status": "Fora de uso",
+    "maintenanceDate": null,
+    "serialNumber": "SN-34573",
+    "id": 28
   }
 ];
