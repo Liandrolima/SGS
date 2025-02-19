@@ -231,17 +231,22 @@ const Dashboard = () => {
                     value={editingResource.status}
                     onChange={(e) => {
                         const newStatus = e.target.value;
-                        let newResource = { ...editingResource, status: newStatus };    
-                        // Se o status for "Em manutenção", define a data de início
+                        let newResource = { ...editingResource, status: newStatus };
+                    
                         if (newStatus === "Em manutenção") {
                             if (!newResource.maintenanceDate) {
-                                newResource.maintenanceDate = new Date().toISOString(); // Atribui a data atual se não houver data
+                                newResource.maintenanceDate = new Date().toISOString(); // Salva a data da manutenção apenas se ainda não estiver definida
                             }
                         } else {
-                            newResource.maintenanceDate = null; // Se for outro status, reseta a data de manutenção
-                        }    
+                            if (!newResource.maintenanceDate) { 
+                                newResource.maintenanceDate = new Date().toISOString(); // Apenas define a data se ainda não houver uma
+                            }
+                        }
+                    
                         setEditingResource(newResource);
                     }}
+                    
+                    
                     SelectProps={{
                         native: true,
                     }}
@@ -255,7 +260,7 @@ const Dashboard = () => {
                     <TextField
                         fullWidth
                         label="Data em que o recurso ficou disponível"
-                        value={editingResource.maintenanceDate || new Date().toLocaleString()}
+                        value={editingResource?.maintenanceDate ? new Date(editingResource.maintenanceDate).toLocaleString() : ''}
                         InputProps={{
                             readOnly: true,
                         }}
@@ -305,7 +310,7 @@ const Dashboard = () => {
                     <TextField
                         fullWidth
                         label="Data em que o recurso Fora de uso"
-                        value={editingResource.maintenanceDate || new Date().toLocaleString()}
+                        value={editingResource?.maintenanceDate ? new Date(editingResource.maintenanceDate).toLocaleString() : ''}
                         InputProps={{
                             readOnly: true,
                         }}
@@ -316,101 +321,146 @@ const Dashboard = () => {
                 <Button variant="contained" color="primary" onClick={handleSaveEdit}>Salvar Alterações</Button>
                 </Paper>                     
                     )}
-                    {userRole === "admin" && (
-                        <Paper sx={{ padding: 2, margin: "20px" }}>
-                        <Typography variant="h5">Adicionar Novo Recurso</Typography>                    
-                        {/* Nome do recurso */}
-                        <TextField 
-                            fullWidth 
-                            label="Nome" 
-                            value={newResource.name} 
-                            onChange={(e) => setNewResource({ ...newResource, name: e.target.value })} 
-                        />                        
-                        {/* Status do recurso */}
-                        <TextField 
-                            fullWidth 
-                            label="Status"
-                            select
-                            value={newResource.status}
-                            onChange={(e) => {
-                                const newStatus = e.target.value;
-                                let newResourceCopy = { ...newResource, status: newStatus };
-                                // Se o status for "Em manutenção", define a data de início
-                                if (newStatus === "Em manutenção" && !newResourceCopy.maintenanceDate) {
-                                    newResourceCopy.maintenanceDate = new Date().toISOString(); // Atribui a data atual se não houver data
-                                } else {
-                                    newResourceCopy.maintenanceDate = null; // Se for outro status, reseta a data de manutenção
-                                }                    
-                                setNewResource(newResourceCopy);
-                            }}
-                            SelectProps={{
-                                native: true,
-                            }}
-                        >
-                            <option value="Disponível">Disponível</option>
-                            <option value="Em manutenção">Em manutenção</option>
-                            <option value="Fora de uso">Fora de uso</option>
-                        </TextField>
-                        {/* Exibe a data em que o novo recurso ficou disponível */}  
-                        {newResource.status === "Disponível" && (
-                            <TextField
-                                fullWidth
-                                label="Data em que o novo recurso ficou disponível"
-                                value={newResource.maintenanceDate || new Date().toLocaleString()}
-                                InputProps={{
-                                    readOnly: true,
-                                }}
-                                sx={{ marginTop: 2, backgroundColor: 'green'}}
-                            />
-                        )}                          
-                        {/* Exibe a data de início da manutenção e o status, se o status for "Em manutenção" */}
-                        {newResource.status === "Em manutenção" && (
-                            <Box sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                width: 'fixo', 
-                                backgroundColor: maintenancenewStatus.color, // Cor de fundo
-                                padding: 2, // Padding para dar o espaçamento
-                                borderRadius: 1, // Bordas arredondadas
-                            }}>
-                                <TextField
-                                    label="Data de Início da Manutenção"
-                                    value={newResource?.maintenanceDate ? new Date(newResource.maintenanceDate).toLocaleString() : ''}
-                                    InputProps={{
-                                        readOnly: true, // Campo de leitura
-                                    }}
-                                    sx={{
-                                        backgroundColor: 'transparent', // Fundo transparente
-                                        color: 'black', // Cor do texto
-                                        flexGrow: 1, // Ocupa o máximo de espaço possível
-                                        border: 'none', // Remove borda
-                                        '& .MuiOutlinedInput-root': {
-                                            '& fieldset': {
-                                                border: 'none', // Remove a borda
-                                            },
-                                        },
-                                    }}
-                                />                    
-                                <Typography variant="body2" sx={{
-                                    color: 'black', // Cor do texto
-                                    marginLeft: 1, // Um pouco mais de margem à esquerda
-                                    whiteSpace: 'nowrap', // Para garantir que o texto não quebre em várias linhas
-                                    textAlign: 'left', // Alinha o texto à esquerda
-                                }}>
-                                    {maintenancenewStatus.text}
-                                </Typography>
-                            </Box>
-                        )}
-                        {/* Exibe a data em que o novo recurso ficou Fora de uso */}  
-                        {newResource.status === "Fora de uso" && (
-                            <TextField
-                                fullWidth
-                                label="Data em que o novo recurso ficou Fora de uso"
-                                value={newResource.maintenanceDate || new Date().toLocaleString()}
-                                InputProps={{
-                                    readOnly: true,
-                                }}
-                                sx={{ marginTop: 2, backgroundColor: 'red'}}
+                    {userRole === "admin" && ( 
+    <Paper sx={{ padding: 2, margin: "20px" }}>
+        <Typography variant="h5">Adicionar Novo Recurso</Typography>                    
+
+        {/* Nome do recurso */}
+        <TextField 
+            fullWidth 
+            label="Nome" 
+            value={newResource.name} 
+            onChange={(e) => setNewResource({ ...newResource, name: e.target.value })} 
+        />                        
+
+        {/* Status do recurso */}
+        <TextField 
+            fullWidth 
+            label="Status"
+            select
+            value={newResource.status}
+            onChange={(e) => {
+                const newStatus = e.target.value;
+                let newResourceCopy = { ...newResource, status: newStatus };
+
+                // Se o status for "Em manutenção", define a data de início
+                if (newStatus === "Em manutenção") {
+                    if (!newResourceCopy.maintenanceDate) {
+                        newResourceCopy.maintenanceDate = new Date().toISOString(); // Apenas define se não houver uma
+                    }
+                } else {
+                    if (!newResourceCopy.availabilityDate) { 
+                        newResourceCopy.availabilityDate = new Date().toISOString(); // Apenas define se não houver uma
+                    }
+                }
+
+                setNewResource(newResourceCopy); // CORREÇÃO: Agora estamos atualizando corretamente newResource
+            }}
+            SelectProps={{
+                native: true,
+            }}
+        >
+            <option value="Disponível">Disponível</option>
+            <option value="Em manutenção">Em manutenção</option>
+            <option value="Fora de uso">Fora de uso</option>
+        </TextField>
+
+        {/* Exibe a data em que o novo recurso ficou disponível */}  
+{newResource.status === "Disponível" && (
+    <TextField
+        fullWidth
+        label="Data em que o novo recurso ficou disponível"
+        value={newResource.availabilityDate 
+            ? new Date(newResource.availabilityDate).toLocaleString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit' // Adiciona os segundos
+            }) 
+            : new Date().toLocaleString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit' // Adiciona os segundos
+            })
+        }
+        InputProps={{ readOnly: true }}
+        sx={{ marginTop: 2, backgroundColor: 'green' }}
+    />
+)}
+
+{/* Exibe a data de início da manutenção e o status */}
+{newResource.status === "Em manutenção" && (
+    <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+       
+        backgroundColor: 'yellow', 
+        padding: 2, 
+        borderRadius: 1, 
+    }}>
+        <TextField
+            label="Data de Início da Manutenção"
+            value={newResource.maintenanceDate 
+                ? new Date(newResource.maintenanceDate).toLocaleString('pt-BR', { 
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric', 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit' // Adiciona os segundos
+                }) 
+                : ''
+            }
+            InputProps={{ readOnly: true }}
+            sx={{
+                backgroundColor: 'transparent', 
+                color: 'black', 
+                flexGrow: 1, 
+                border: 'none', 
+                '& .MuiOutlinedInput-root fieldset': { border: 'none' }
+            }}
+        />                    
+        <Typography variant="body2" sx={{
+            color: 'black', 
+            marginLeft: 1, 
+            whiteSpace: 'nowrap', 
+            textAlign: 'left', 
+        }}>
+            Após adicionar manutenção vencerá em sete dias
+        </Typography>
+    </Box>
+)}
+
+{/* Exibe a data em que o novo recurso ficou Fora de uso */}  
+{newResource.status === "Fora de uso" && (
+    <TextField
+        fullWidth
+        label="Data em que o novo recurso ficou Fora de uso"
+        value={newResource.availabilityDate 
+            ? new Date(newResource.availabilityDate).toLocaleString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit' // Adiciona os segundos
+            }) 
+            : new Date().toLocaleString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit' // Adiciona os segundos
+            })
+        }
+        InputProps={{ readOnly: true }}
+        sx={{ marginTop: 2, backgroundColor: 'red' }}
                             />
                         )}                              
                         {/* Botão para adicionar o novo recurso */}
