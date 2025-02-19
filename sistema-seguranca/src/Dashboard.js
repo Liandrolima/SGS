@@ -215,106 +215,102 @@ const Dashboard = () => {
             )}
             {editingResource && (
                 <Paper sx={{ padding: 2, margin: "20px" }}>
-                <Typography variant="h5">Editar Recurso</Typography>    
+                <Typography variant="h5">Editar Recurso</Typography>
+                
                 {/* Nome do recurso */}
-                <TextField 
-                    fullWidth 
-                    label="Nome" 
-                    value={editingResource.name} 
-                    onChange={(e) => setEditingResource({ ...editingResource, name: e.target.value })} 
-                />    
+                <TextField
+                  fullWidth
+                  label="Nome"
+                  value={editingResource.name}
+                  onChange={(e) => setEditingResource({ ...editingResource, name: e.target.value })}
+                />
+              
                 {/* Status do recurso */}
                 <TextField
-                    fullWidth
-                    label="Status"
-                    select
-                    value={editingResource.status}
-                    onChange={(e) => {
-                        const newStatus = e.target.value;
-                        let newResource = { ...editingResource, status: newStatus };
-                    
-                        if (newStatus === "Em manutenção") {
-                            if (!newResource.maintenanceDate) {
-                                newResource.maintenanceDate = new Date().toISOString(); // Salva a data da manutenção apenas se ainda não estiver definida
-                            }
-                        } else {
-                            if (!newResource.maintenanceDate) { 
-                                newResource.maintenanceDate = new Date().toISOString(); // Apenas define a data se ainda não houver uma
-                            }
-                        }
-                    
-                        setEditingResource(newResource);
-                    }}
-                    
-                    
-                    SelectProps={{
-                        native: true,
-                    }}
+                  fullWidth
+                  label="Status"
+                  select
+                  value={editingResource.status}
+                  onChange={(e) => {
+                    const newStatus = e.target.value;
+                    let newResource = { ...editingResource, status: newStatus };
+              
+                    // Atualiza a data para o momento da mudança de status
+                    newResource.maintenanceDate = new Date().toISOString(); // Atualiza a data de manutenção
+              
+                    setEditingResource(newResource); // Atualiza o estado com o novo recurso e sua data
+                  }}
+                  SelectProps={{
+                    native: true,
+                  }}
                 >
-                    <option value="Disponível">Disponível</option>
-                    <option value="Em manutenção">Em manutenção</option>
-                    <option value="Fora de uso">Fora de uso</option>
+                  <option value="Disponível">Disponível</option>
+                  <option value="Em manutenção">Em manutenção</option>
+                  <option value="Fora de uso">Fora de uso</option>
                 </TextField>
-                {/* Exibe a data em que o recurso ficou disponível */}  
+              
+                {/* Exibe a data em que o recurso ficou disponível */}
                 {editingResource.status === "Disponível" && (
-                    <TextField
-                        fullWidth
-                        label="Data em que o recurso ficou disponível"
-                        value={editingResource?.maintenanceDate ? new Date(editingResource.maintenanceDate).toLocaleString() : ''}
-                        InputProps={{
-                            readOnly: true,
-                        }}
-                        sx={{ marginTop: 2, backgroundColor: 'green'}}
-                    />
-                )}              
+                  <TextField
+                    fullWidth
+                    label="Data em que o recurso ficou disponível"
+                    value={editingResource?.maintenanceDate ? new Date(editingResource.maintenanceDate).toLocaleString() : ''}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{ marginTop: 2, backgroundColor: 'green' }}
+                  />
+                )}
+              
                 {/* Exibe a data de início da manutenção e o status */}
                 {editingResource.status === "Em manutenção" && (
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        width: 'fixo', 
-                        backgroundColor: maintenanceStatus.color, // Cor de fundo
-                        padding: 2, // Padding para dar o espaçamento
-                        borderRadius: 1, // Bordas arredondadas
-                      }}>
-                        <TextField
-                          label="Data de Início da Manutenção"
-                          value={editingResource?.maintenanceDate ? new Date(editingResource.maintenanceDate).toLocaleString() : ''}
-                          InputProps={{
-                            readOnly: true, // Campo de leitura
-                          }}
-                          sx={{
-                            backgroundColor: 'transparent', // Fundo transparente
-                            color: 'black', // Cor do texto
-                            flexGrow: 1, // Ocupa o máximo de espaço possível
-                            border: 'none', // Remove borda
-                            '& .MuiOutlinedInput-root': {
-                              '& fieldset': {
-                                border: 'none', // Remove a borda
-                              },
-                            },
-                          }}
-                        />                        
-                        <Typography variant="body2" sx={{
-                          color: 'black', // Cor do texto
-                          marginLeft: 0.5, // Menor margem à esquerda para deixar a data mais próxima do texto
-                          whiteSpace: 'nowrap', // Para garantir que o texto não quebre em várias linhas
-                          textAlign: 'left', // Alinha o texto à esquerda
-                        }}>
-                          {maintenanceStatus.text}
-                        </Typography>
-                      </Box>                   
-                )}  
-                 {/* Exibe a data em que o recurso ficou Fora de uso */}  
-                 {editingResource.status === "Fora de uso" && (
+                  <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: 'fixo',
+                    backgroundColor: maintenanceStatus.color, // Cor de fundo
+                    padding: 2, // Padding para dar o espaçamento
+                    borderRadius: 1, // Bordas arredondadas
+                  }}>
                     <TextField
-                        fullWidth
-                        label="Data em que o recurso Fora de uso"
-                        value={editingResource?.maintenanceDate ? new Date(editingResource.maintenanceDate).toLocaleString() : ''}
-                        InputProps={{
-                            readOnly: true,
-                        }}
-                        sx={{ marginTop: 2, backgroundColor: 'red'}}
+                      label="Data de Início da Manutenção"
+                      value={editingResource?.maintenanceDate ? new Date(editingResource.maintenanceDate).toLocaleString() : ''}
+                      InputProps={{
+                        readOnly: true, // Campo de leitura
+                      }}
+                      sx={{
+                        backgroundColor: 'transparent', // Fundo transparente
+                        color: 'black', // Cor do texto
+                        flexGrow: 1, // Ocupa o máximo de espaço possível
+                        border: 'none', // Remove borda
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            border: 'none', // Remove a borda
+                          },
+                        },
+                      }}
+                    />
+                    <Typography variant="body2" sx={{
+                      color: 'black', // Cor do texto
+                      marginLeft: 0.5, // Menor margem à esquerda para deixar a data mais próxima do texto
+                      whiteSpace: 'nowrap', // Para garantir que o texto não quebre em várias linhas
+                      textAlign: 'left', // Alinha o texto à esquerda
+                    }}>
+                      {maintenanceStatus.text}
+                    </Typography>
+                  </Box>
+                )}
+              
+                {/* Exibe a data em que o recurso ficou Fora de uso */}
+                {editingResource.status === "Fora de uso" && (
+                  <TextField
+                    fullWidth
+                    label="Data em que o recurso Fora de uso"
+                    value={editingResource?.maintenanceDate ? new Date(editingResource.maintenanceDate).toLocaleString() : ''}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{ marginTop: 2, backgroundColor: 'red' }}
                     />
                 )}              
                 {/* Botão para salvar as alterações */}
@@ -490,37 +486,37 @@ const Dashboard = () => {
                     <Card>
                     <CardContent>
     <Typography variant="h6">Status dos Recursos</Typography>
-    <Paper sx={{ padding: 2 }}>
-        <Grid container spacing={3} sx={{ justifyContent: "center", alignItems: "center" }}>
-            {/* Gráfico de Pizza */}
-            <Grid item xs={12} md={6}>
-                <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                        <Pie 
-                            data={pieData} 
-                            dataKey="count" 
-                            nameKey="status" 
-                            cx="50%" 
-                            cy="50%" 
-                            outerRadius={80}
-                        >
-                            {pieData.map((item, index) => {
-                                let fillColor = "#ccc"; // Cor padrão
-                                // Alterando cores conforme o status
-                                if (item.status === "Em manutenção") {
-                                    fillColor = "yellow"; // Amarelo para "Em manutenção"
-                                } else if (item.status === "Disponível") {
-                                    fillColor = "green"; // Verde para "Disponível"
-                                }else if (item.status === "Fora de uso") {
-                                    fillColor = "red";
-                                }
-                                return <Cell key={index} fill={fillColor} />;
-                            })}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                    </PieChart>
-                </ResponsiveContainer>
+<Paper sx={{ padding: 2 }}>
+  <Grid container spacing={3} sx={{ justifyContent: "center", alignItems: "center" }}>
+    {/* Gráfico de Pizza */}
+    <Grid item xs={12} md={6}>
+      <ResponsiveContainer width="100%" height={250}>
+        <PieChart>
+          <Pie 
+            data={pieData} 
+            dataKey="count" 
+            nameKey="status" 
+            cx="50%" 
+            cy="50%" 
+            outerRadius={80}
+          >
+            {pieData.map((item, index) => {
+              let fillColor = "#ccc"; // Cor padrão
+              // Alterando cores conforme o status
+              if (item.status === "Em manutenção") {
+                fillColor = "yellow"; // Amarelo para "Em manutenção"
+              } else if (item.status === "Disponível") {
+                fillColor = "green"; // Verde para "Disponível"
+              } else if (item.status === "Fora de uso") {
+                fillColor = "red";
+              }
+              return <Cell key={index} fill={fillColor} />;
+            })}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
             </Grid>
             {/* Lista de Recursos ao Lado */}
             <Grid item xs={12} md={6}>
@@ -564,25 +560,59 @@ const Dashboard = () => {
                     </Card>
                 </Grid>
             </Grid>
-            <Typography variant="h5" sx={{ marginTop: 4 }}>Recursos Mais Utilizados</Typography>
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Recurso</TableCell>
-                            <TableCell>Quantidade de Uso</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {usageStats.map((item, index) => (
-                            <TableRow key={index}>
-                                <TableCell>{item.resource}</TableCell>
-                                <TableCell>{item.usageCount}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <Typography variant="h5" sx={{ marginTop: 4 }}>Recursos Mais Utilizados</Typography>  
+<TableContainer>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>Recurso</TableCell>          
+        <TableCell>Disponibilidade</TableCell>
+        <TableCell>Tempo de Disponibilidade</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {resources
+        .filter(item => item.status === "Disponível") // Apenas recursos disponíveis
+        .map((item, index) => {
+          // Se maintenanceDate for válido, mostra a data
+          const disponibilidade = item.maintenanceDate 
+            ? new Date(item.maintenanceDate).toLocaleString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            }) 
+            : "N/A"; // Se não tiver maintenanceDate, exibe "N/A"
+          
+          // Calculando o tempo de disponibilidade
+          const agora = new Date();
+          const manutencaoData = item.maintenanceDate ? new Date(item.maintenanceDate) : null;
+          let tempoDisponibilidade = "N/A"; // Default
+
+          if (manutencaoData) {
+            const diff = Math.floor((agora - manutencaoData) / 1000); // tempo em segundos
+            const dias = Math.floor(diff / 86400); // 86400 segundos por dia
+            const horas = Math.floor((diff % 86400) / 3600); // 3600 segundos por hora
+            const minutos = Math.floor((diff % 3600) / 60); // 60 segundos por minuto
+            const segundos = diff % 60;
+
+            tempoDisponibilidade = `${dias}d ${horas}h ${minutos}m ${segundos}s`; // Formato de tempo
+          }
+
+          return (
+            <TableRow key={index}>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{disponibilidade}</TableCell>
+              <TableCell>{tempoDisponibilidade}</TableCell>
+            </TableRow>
+          );
+        })}
+    </TableBody>
+  </Table>
+</TableContainer>
+
             <Typography variant="h5" sx={{ marginTop: 4 }}>Atividades por Tipo de Usuário</Typography>
             <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={userActivityStats}>

@@ -64,7 +64,7 @@ module.exports = [
     "id": 26
   },
   {
-    "name": "Tablet",
+    "name": "Tablet2",
     "status": "Disponível",
     "maintenanceDate": "2025-02-17T15:51:31.888Z",
     "serialNumber": "SN-904876",
@@ -86,9 +86,9 @@ module.exports = [
   },
   {
     "name": "Máquina002",
-    "status": "Fora de uso",
+    "status": "Disponível",
     "serialNumber": "SN-578261",
-    "maintenanceDate": "2025-02-19T00:49:56.873Z",
+    "maintenanceDate": "2025-02-19T18:18:01.436Z",
     "id": 30
   },
   {
@@ -112,5 +112,21 @@ module.exports = [
     "maintenanceDate": "2025-02-19T03:10:54.136Z",
     "serialNumber": "SN-125793",
     "id": 33
+  },
+  {
+    "name": "Máquina011",
+    "status": "Disponível",
+    "maintenanceDate": "2025-02-19T19:00:03.914Z",
+    "availabilityDate": "2025-02-19T18:19:24.833Z",
+    "serialNumber": "SN-957031",
+    "id": 34
+  },
+  {
+    "name": "Máquina012",
+    "status": "Disponível",
+    "maintenanceDate": "2025-02-19T19:00:33.219Z",
+    "availabilityDate": "2025-02-19T19:00:52.394Z",
+    "serialNumber": "SN-454094",
+    "id": 35
   }
 ];
