@@ -48,44 +48,78 @@ const CadastroUsuario = () => {
   }
 
   return (
-    <Paper sx={{ padding: 2, margin: "20px", textAlign: "center" }}>
-      <Typography variant="h5">Cadastrar Novo Usuário</Typography>
+    <Paper sx={{ 
+      padding: 3, 
+      margin: "20px", 
+      backgroundColor: "#1c1c1c", 
+      color: "#f5f5f5", 
+      borderRadius: 2, 
+      boxShadow: "0px 0px 10px #ffcc00" 
+  }}>
+      <Typography variant="h5" sx={{ color: "#F8D210" }}>
+          Cadastrar Novo Usuário
+      </Typography>
       <TextField
-        fullWidth
-        label="E-mail"
-        value={novoUsuario.email}
-        onChange={(e) => setNovoUsuario({ ...novoUsuario, email: e.target.value })}
-        sx={{ marginBottom: 2 }}
+          fullWidth
+          label="E-mail"
+          value={novoUsuario.email}
+          onChange={(e) => setNovoUsuario({ ...novoUsuario, email: e.target.value })}
+          sx={{
+              marginBottom: 2,
+              backgroundColor: "#333",
+              borderRadius: 1,
+              input: { color: "#fdd835" },
+              label: { color: "#fdd835" }
+          }}
       />
       <TextField
-  fullWidth
-  label="Password"
-  type="password"
-  value={novoUsuario.password}
-  onChange={(e) => setNovoUsuario({ ...novoUsuario, password: e.target.value })}
-  sx={{ marginBottom: 2 }}
-/>
-
-<TextField
-  fullWidth
-  label="Função (admin, gerente, usuário)"
-  value={novoUsuario.role}
-  onChange={(e) => setNovoUsuario({ ...novoUsuario, role: e.target.value })}
-  select
-  SelectProps={{
-    native: true,
-  }}
-  sx={{ marginBottom: 2 }}
->
-  <option value="Administrador">Administrador(a)</option>
-  <option value="Gerente">Gerente</option>
-  <option value="Funcionario">Funcionário(a)</option>
-</TextField>
-
-      <Button variant="contained" color="success" onClick={handleCadastro}>
-        Cadastrar
+          fullWidth
+          label="Password"
+          type="password"
+          value={novoUsuario.password}
+          onChange={(e) => setNovoUsuario({ ...novoUsuario, password: e.target.value })}
+          sx={{
+              marginBottom: 2,
+              backgroundColor: "#333",
+              borderRadius: 1,
+              input: { color: "#fdd835" },
+              label: { color: "#fdd835" }
+          }}
+      />
+      <TextField
+          fullWidth
+          label="Função (admin, gerente, usuário)"
+          value={novoUsuario.role}
+          onChange={(e) => setNovoUsuario({ ...novoUsuario, role: e.target.value })}
+          select
+          SelectProps={{
+              native: true,
+          }}
+          sx={{
+              marginBottom: 2,
+              backgroundColor: "#333",
+              borderRadius: 1,
+              
+              label: { color: "#fdd835" }
+          }}
+      >
+          <option value="Administrador">Administrador(a)</option>
+          <option value="Gerente">Gerente</option>
+          <option value="Funcionario">Funcionário(a)</option>
+      </TextField>
+      <Button 
+          variant="contained" 
+          onClick={handleCadastro} 
+          sx={{
+              backgroundColor: "#fdd835",
+              color: "#1c1c1c",
+              fontWeight: "bold",
+              '&:hover': { backgroundColor: "#ffeb3b" }
+          }}
+      >
+          Cadastrar
       </Button>
-    </Paper>
+  </Paper>
   );
 };
 

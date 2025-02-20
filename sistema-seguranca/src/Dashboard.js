@@ -208,7 +208,7 @@ const Dashboard = () => {
     {loading ? (
         <CircularProgress sx={{ color: "#FFD700" }} />
     ) : resources.length > 0 ? (
-        <TableContainer sx={{ marginTop: 3 }}>
+        <TableContainer sx={{ backgroundColor: "#1c1c1c",borderRadius: 2, boxShadow: "0 4px 10px rgba(255, 223, 0, 0.3)", marginTop: 3 }}>
             <Table sx={{ backgroundColor: "#1E1E1E", borderRadius: "10px" }}>
                 <TableHead>
                     <TableRow sx={{ backgroundColor: "#333", color: "#FFD700" }}>
@@ -262,12 +262,13 @@ const Dashboard = () => {
         <Typography variant="h6" sx={{ marginTop: 2, color: "#FFD700" }}>Nenhum recurso encontrado.</Typography>
     )}
             {editingResource && (
-    <Paper sx={{
-        padding: 2,
-        margin: "20px",
-        backgroundColor: "#1C1C1C",
-        color: "#F8D210",
-        borderRadius: "8px"
+    <Paper sx={{ 
+        padding: 3, 
+        margin: "20px", 
+        backgroundColor: "#1c1c1c", 
+        color: "#f5f5f5", 
+        borderRadius: 2, 
+        boxShadow: "0px 0px 10px #ffcc00" 
     }}>
         <Typography variant="h5" sx={{ color: "#F8D210" }}>Editar Recurso</Typography>
         
@@ -347,9 +348,16 @@ const Dashboard = () => {
     </Paper>
 )}
 
-                    {userRole === "admin" && ( 
-    <Paper sx={{ padding: 2, margin: "20px" }}>
-        <Typography variant="h5">Adicionar Novo Recurso</Typography>                    
+{userRole === "admin" && ( 
+    <Paper sx={{ 
+        padding: 3, 
+        margin: "20px", 
+        backgroundColor: "#1c1c1c", 
+        color: "#f5f5f5", 
+        borderRadius: 2, 
+        boxShadow: "0px 0px 10px #ffcc00" 
+    }}>
+        <Typography variant="h5" sx={{ color: "#ffcc00" }}>Adicionar Novo Recurso</Typography>                    
 
         {/* Nome do recurso */}
         <TextField 
@@ -357,6 +365,8 @@ const Dashboard = () => {
             label="Nome" 
             value={newResource.name} 
             onChange={(e) => setNewResource({ ...newResource, name: e.target.value })} 
+            sx={{ backgroundColor: "#333", borderRadius: 1, input: { color: "#f5f5f5" } }}
+            InputLabelProps={{ style: { color: "#F8D210" } }}
         />                        
 
         {/* Status do recurso */}
@@ -369,130 +379,85 @@ const Dashboard = () => {
                 const newStatus = e.target.value;
                 let newResourceCopy = { ...newResource, status: newStatus };
 
-                // Se o status for "Em manutenção", define a data de início
                 if (newStatus === "Em manutenção") {
                     if (!newResourceCopy.maintenanceDate) {
-                        newResourceCopy.maintenanceDate = new Date().toISOString(); // Apenas define se não houver uma
+                        newResourceCopy.maintenanceDate = new Date().toISOString();
                     }
                 } else {
                     if (!newResourceCopy.availabilityDate) { 
-                        newResourceCopy.availabilityDate = new Date().toISOString(); // Apenas define se não houver uma
+                        newResourceCopy.availabilityDate = new Date().toISOString();
                     }
                 }
 
-                setNewResource(newResourceCopy); // CORREÇÃO: Agora estamos atualizando corretamente newResource
+                setNewResource(newResourceCopy);
             }}
             SelectProps={{
                 native: true,
             }}
+            sx={{ backgroundColor: "#333", color: "#FFF", borderRadius: "4px", marginTop: 2 }}
+            InputLabelProps={{ style: { color: "#F8D210" } }}
         >
             <option value="Disponível">Disponível</option>
             <option value="Em manutenção">Em manutenção</option>
             <option value="Fora de uso">Fora de uso</option>
         </TextField>
 
-        {/* Exibe a data em que o novo recurso ficou disponível */}  
-{newResource.status === "Disponível" && (
-    <TextField
-        fullWidth
-        label="Data em que o novo recurso ficou disponível"
-        value={newResource.availabilityDate 
-            ? new Date(newResource.availabilityDate).toLocaleString('pt-BR', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit' // Adiciona os segundos
-            }) 
-            : new Date().toLocaleString('pt-BR', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit' // Adiciona os segundos
-            })
-        }
-        InputProps={{ readOnly: true }}
-        sx={{ marginTop: 2, backgroundColor: 'green' }}
-    />
+        {/* Data em que o novo recurso ficou disponível */}  
+        {newResource.status === "Disponível" && (
+            <TextField
+                fullWidth
+                label="Data de Disponibilidade"
+                value={newResource.availabilityDate ? new Date(newResource.availabilityDate).toLocaleString('pt-BR') : ''}
+                InputProps={{ readOnly: true }}
+                sx={{ marginTop: 2, backgroundColor: 'green', color: "#f5f5f5" }}
+                
+            />
+        )}
+
+        {/* Data de início da manutenção */}
+        {newResource.status === "Em manutenção" && (
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: 'yellow', 
+                padding: 2, 
+                borderRadius: 1, 
+            }}>
+                <TextField
+                    label="Data de Início da Manutenção"
+                    value={newResource.maintenanceDate ? new Date(newResource.maintenanceDate).toLocaleString('pt-BR') : ''}
+                    InputProps={{ readOnly: true }}
+                    sx={{ backgroundColor: 'transparent', color: 'black', flexGrow: 1 }}
+                />                    
+                <Typography variant="body2" sx={{ color: 'black', marginLeft: 1 }}>
+                    Após adicionar, a manutenção vencerá em sete dias
+                </Typography>
+            </Box>
+        )}
+
+        {/* Data em que o novo recurso ficou Fora de uso */}  
+        {newResource.status === "Fora de uso" && (
+            <TextField
+                fullWidth
+                label="Data Fora de Uso"
+                value={newResource.availabilityDate ? new Date(newResource.availabilityDate).toLocaleString('pt-BR') : ''}
+                InputProps={{ readOnly: true }}
+                sx={{ marginTop: 2, backgroundColor: 'red', color: "#f5f5f5" }}
+            />
+        )}                              
+        
+        {/* Botão para adicionar o novo recurso */}
+        <Button 
+            variant="contained" 
+            color="success" 
+            onClick={handleSaveNewResource} 
+            sx={{ marginTop: 2, backgroundColor: "#ffcc00", color: "#000", '&:hover': { backgroundColor: "#e6b800" } }}
+        >
+            Adicionar
+        </Button>
+    </Paper>                
 )}
 
-{/* Exibe a data de início da manutenção e o status */}
-{newResource.status === "Em manutenção" && (
-    <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-       
-        backgroundColor: 'yellow', 
-        padding: 2, 
-        borderRadius: 1, 
-    }}>
-        <TextField
-            label="Data de Início da Manutenção"
-            value={newResource.maintenanceDate 
-                ? new Date(newResource.maintenanceDate).toLocaleString('pt-BR', { 
-                    day: '2-digit', 
-                    month: '2-digit', 
-                    year: 'numeric', 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    second: '2-digit' // Adiciona os segundos
-                }) 
-                : ''
-            }
-            InputProps={{ readOnly: true }}
-            sx={{
-                backgroundColor: 'transparent', 
-                color: 'black', 
-                flexGrow: 1, 
-                border: 'none', 
-                '& .MuiOutlinedInput-root fieldset': { border: 'none' }
-            }}
-        />                    
-        <Typography variant="body2" sx={{
-            color: 'black', 
-            marginLeft: 1, 
-            whiteSpace: 'nowrap', 
-            textAlign: 'left', 
-        }}>
-            Após adicionar manutenção vencerá em sete dias
-        </Typography>
-    </Box>
-)}
-
-{/* Exibe a data em que o novo recurso ficou Fora de uso */}  
-{newResource.status === "Fora de uso" && (
-    <TextField
-        fullWidth
-        label="Data em que o novo recurso ficou Fora de uso"
-        value={newResource.availabilityDate 
-            ? new Date(newResource.availabilityDate).toLocaleString('pt-BR', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit' // Adiciona os segundos
-            }) 
-            : new Date().toLocaleString('pt-BR', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit' // Adiciona os segundos
-            })
-        }
-        InputProps={{ readOnly: true }}
-        sx={{ marginTop: 2, backgroundColor: 'red' }}
-                            />
-                        )}                              
-                        {/* Botão para adicionar o novo recurso */}
-                        <Button variant="contained" color="success" onClick={handleSaveNewResource}>Adicionar</Button>
-                    </Paper>                
-            )}
             {(userRole === "admin" || userRole === "gerente") && <CadastroUsuario />}
             <Grid container spacing={2} sx={{ marginTop: 2 }}>
                 <Grid item xs={12}>
@@ -515,6 +480,7 @@ const Dashboard = () => {
                 </Grid>
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                 <Grid item xs={12} md={12}>
+                </Grid>
                     <Card>
                     <CardContent>
                     <Typography variant="h6" align="center">Status dos Recursos</Typography>
@@ -566,41 +532,51 @@ const Dashboard = () => {
                         </ResponsiveContainer>
             </Grid>
                {/* Lista de Recursos */}
-  <Grid 
+               <Grid 
     container 
     justifyContent="center" 
     alignItems="center" 
-    sx={{ width: "100%", display: "flex", marginTop: 3 }}
+    sx={{
+        padding: -4,
+        margin: "20px",
+        marginLeft: "-15px",
+        textAlign: "center",
+        backgroundColor: "#121212",
+        color: "#FFD700",
+        boxShadow: "0px 4px 10px rgba(255, 215, 0, 0.5)",
+        borderRadius: "10px",
+    }}
   >
     <Grid item xs={12} sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-      <Typography variant="h6" align="center"><strong>Recursos por Status</strong></Typography>
+      <Typography variant="h6" align="center" sx={{ marginTop: 4, color: '#FFD700', fontWeight: 'bold' }}>
+        Recursos por Status
+      </Typography>
     </Grid>
     <Grid item xs={12} sx={{ display: "flex", justifyContent: "center", width: "80%" }}>
-      <Paper sx={{ padding: 2, width: "100%", overflow: "auto" }}>
-      <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Tabela de Recursos">
+      <Paper sx={{ padding: 2, width: "100%", overflow: "auto", backgroundColor: '#1C1C1C', color: '#FFFFFF' }}>
+        <Table sx={{ backgroundColor: '#1C1C1C', color: '#FFFFFF', padding: 2 }} >
           <TableHead>
             <TableRow>
-              <TableCell><strong>Nome do Recurso</strong></TableCell>
-              <TableCell><strong>Status</strong></TableCell>
-              <TableCell><strong>Última Atualização</strong></TableCell>
+              <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Nome do Recurso</TableCell>
+              <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Status</TableCell>
+              <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Última Atualização</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {processedData.map((item, index) => {
-              let textColor = "#000000"; 
+              let textColor = "#FFFFFF"; 
               if (item.status === "Em manutenção") {
-                textColor = "yellow";
+                textColor = "#FFD700";
               } else if (item.status === "Disponível") {
-                textColor = "green";
+                textColor = "#32CD32";
               } else if (item.status === "Fora de uso") {
-                textColor = "red";
+                textColor = "#FF4500";
               }
-
               return item.processedResources.map((resource, i) => (
-                <TableRow key={i}>
-                  <TableCell>{resource.name}</TableCell>
+                <TableRow key={i} sx={{ backgroundColor: '#2B2B2B' }}>
+                  <TableCell sx={{ color: "#FFF" }}>{resource.name}</TableCell>
                   <TableCell sx={{ color: textColor }}>{item.status}</TableCell>
-                  <TableCell>{resource.maintenanceDate}</TableCell>
+                  <TableCell sx={{ color: "#FFF" }}>{resource.maintenanceDate}</TableCell>
                 </TableRow>
               ));
             })}
@@ -609,64 +585,75 @@ const Dashboard = () => {
       </Paper>
     </Grid>
   </Grid>
-  </Grid>
-</Paper>
-</CardContent>
-                    </Card>
                 </Grid>
-            </Grid>
-            <Typography variant="h5" sx={{ marginTop: 4 }}>Recursos Mais Utilizados</Typography>  
-<TableContainer>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <TableCell>Recurso</TableCell>          
-        <TableCell>Disponibilidade</TableCell>
-        <TableCell>Tempo de Disponibilidade</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {resources
-        .filter(item => item.status === "Disponível") // Apenas recursos disponíveis
-        .map((item, index) => {
-          // Se maintenanceDate for válido, mostra a data
-          const disponibilidade = item.maintenanceDate 
-            ? new Date(item.maintenanceDate).toLocaleString('pt-BR', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit'
-            }) 
-            : "N/A"; // Se não tiver maintenanceDate, exibe "N/A"
-          
-          // Calculando o tempo de disponibilidade
-          const agora = new Date();
-          const manutencaoData = item.maintenanceDate ? new Date(item.maintenanceDate) : null;
-          let tempoDisponibilidade = "N/A"; // Default
+                </Paper>
+                </CardContent>
+                                    </Card>
+                                </Grid>
+                            <Grid container 
+    justifyContent="center" 
+    alignItems="center" 
+    sx={{
+        padding: -4,
+        margin: "20px",
+        marginLeft: "-1px",
+        textAlign: "center",
+        backgroundColor: "#121212",
+        color: "#FFD700",
+        boxShadow: "0px 4px 10px rgba(255, 215, 0, 0.5)",
+        borderRadius: "10px",
+    }}>
+                            <Typography variant="h5" sx={{ marginTop: 4, color: '#FFD700', fontWeight: 'bold' }}>Recursos Mais Utilizados</Typography>  
+  <TableContainer component={Paper} sx={{ backgroundColor: '#1C1C1C', color: '#FFFFFF', padding: 2 }}>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Recurso</TableCell>          
+          <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Disponibilidade</TableCell>
+          <TableCell sx={{ color: '#FFD700', fontWeight: 'bold' }}>Tempo de Disponibilidade</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {resources
+          .filter(item => item.status === "Disponível")
+          .map((item, index) => {
+            const disponibilidade = item.maintenanceDate 
+              ? new Date(item.maintenanceDate).toLocaleString('pt-BR', { 
+                  day: '2-digit', 
+                  month: '2-digit', 
+                  year: 'numeric', 
+                  hour: '2-digit', 
+                  minute: '2-digit',
+                  second: '2-digit'
+              }) 
+              : "N/A";
+            
+            const agora = new Date();
+            const manutencaoData = item.maintenanceDate ? new Date(item.maintenanceDate) : null;
+            let tempoDisponibilidade = "N/A";
 
-          if (manutencaoData) {
-            const diff = Math.floor((agora - manutencaoData) / 1000); // tempo em segundos
-            const dias = Math.floor(diff / 86400); // 86400 segundos por dia
-            const horas = Math.floor((diff % 86400) / 3600); // 3600 segundos por hora
-            const minutos = Math.floor((diff % 3600) / 60); // 60 segundos por minuto
-            const segundos = diff % 60;
+            if (manutencaoData) {
+              const diff = Math.floor((agora - manutencaoData) / 1000);
+              const dias = Math.floor(diff / 86400);
+              const horas = Math.floor((diff % 86400) / 3600);
+              const minutos = Math.floor((diff % 3600) / 60);
+              const segundos = diff % 60;
 
-            tempoDisponibilidade = `${dias}d ${horas}h ${minutos}m ${segundos}s`; // Formato de tempo
-          }
+              tempoDisponibilidade = `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+            }
 
-          return (
-            <TableRow key={index}>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{disponibilidade}</TableCell>
-              <TableCell>{tempoDisponibilidade}</TableCell>
-            </TableRow>
-          );
-        })}
-    </TableBody>
-  </Table>
-</TableContainer>
+            return (
+              <TableRow key={index} sx={{ backgroundColor: '#2B2B2B' }}>
+                <TableCell sx={{ color: "#FFF" }}>{item.name}</TableCell>
+                <TableCell sx={{ color: "green" }}>{disponibilidade}</TableCell>
+                <TableCell sx={{ color: "green" }}>{tempoDisponibilidade}</TableCell>
+              </TableRow>
+            );
+          })}
+      </TableBody>
+    </Table>
+  </TableContainer>
+  </Grid>
 
             <Typography variant="h5" sx={{ marginTop: 4 }}>Atividades por Tipo de Usuário</Typography>
             <ResponsiveContainer width="100%" height={250}>

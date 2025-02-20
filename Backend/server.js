@@ -6,8 +6,7 @@ const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const resourceRoutes = require("./routes/resources");
 const errorHandler = require("./middlewares/errorHandler");
-const { registerActivity } = require("./services/activityService");
-const { generateDynamicAlerts, registerAlert } = require("./services/alertService");
+
 
 dotenv.config();
 console.log("JWT_SECRET:", process.env.JWT_SECRET); // Teste se o .env está carregando
