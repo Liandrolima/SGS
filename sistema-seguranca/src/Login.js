@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { api } from "./servicos/api";
 import { useNavigate } from "react-router-dom";
+import './Login.css'; // Certifique-se de importar o CSS
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -25,9 +26,9 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p>{error}</p>}
       <form onSubmit={handleLogin}>
         <input
           type="email"
