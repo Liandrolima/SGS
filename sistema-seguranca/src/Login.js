@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { api } from "./servicos/api";
 import { useNavigate } from "react-router-dom";
+import imagemLogin from './imagens/imagem-login.png'; // Importando a imagem
 import './Login.css'; // Certifique-se de importar o CSS
 
 const Login = () => {
@@ -27,7 +28,9 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
+      <h2></h2>
+      <h2></h2>
+      
       {error && <p>{error}</p>}
       <form onSubmit={handleLogin}>
         <input
@@ -46,6 +49,7 @@ const Login = () => {
         />
         <button type="submit">Entrar</button>
       </form>
+      <img src={imagemLogin} alt="Imagem de Login" className="login-image" />
     </div>
   );
 };

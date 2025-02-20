@@ -1,16 +1,29 @@
 /* Estilo só aplicado ao login */
 .login-container {
-    background-color: #1c1c1c;
-    color: #fff;
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-  }
+  position: relative;
+  width: 100vw;  /* Largura total da tela */
+  height: 100vh; /* Altura total da tela */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Impede que a imagem ultrapasse os limites */
+}
+
+  /* Ajusta a imagem para ocupar toda a tela */
+.login-image {
+  position: absolute; /* Faz com que a imagem seja posicionada de forma absoluta */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Faz com que a imagem cubra toda a área, sem distorcer */
+  z-index: -1; /* Coloca a imagem atrás do conteúdo */
+}
+
+/* Estilos adicionais para o formulário */
+
+  
   
   .login-container div {
     background-color: #333333;

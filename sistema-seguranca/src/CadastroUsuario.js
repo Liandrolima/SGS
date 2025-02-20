@@ -56,7 +56,7 @@ const CadastroUsuario = () => {
       borderRadius: 2, 
       boxShadow: "0px 0px 10px #ffcc00" 
   }}>
-      <Typography variant="h5" sx={{ color: "#F8D210" }}>
+      <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 2 }}>
           Cadastrar Novo Usuário
       </Typography>
       <TextField
@@ -99,7 +99,7 @@ const CadastroUsuario = () => {
               marginBottom: 2,
               backgroundColor: "#333",
               borderRadius: 1,
-              
+              select: { color: "#fdd835" },
               label: { color: "#fdd835" }
           }}
       >

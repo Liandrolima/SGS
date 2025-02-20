@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import { Box } from '@mui/material';
 import './dashboardStyles.js';
+import imagemLogin from './imagens/batmancarro.png'; // Importe corretamente a imagem
 
 import CadastroUsuario from "./CadastroUsuario";
 
@@ -180,6 +181,23 @@ const Dashboard = () => {
         borderRadius: "10px",
     }}
 >
+     {/* Grid item para a imagem (lado esquerdo) */}
+     <Grid item xs={12} md={3} sx={{ display: "flex", justifyContent: "flex-start", marginTop: "-10px", marginBottom: "-10%", marginLeft: "10%" }}>
+  <img 
+    src={imagemLogin} 
+    alt="Imagem de Login" 
+    style={{ 
+      width: '1000px',   // Defina o tamanho que deseja para a imagem
+      height: '150px',  // A altura deve ser igual à largura para garantir que seja um círculo perfeito
+      borderRadius: '50%', // Torna a imagem circular
+      marginRight: '20px', 
+      objectFit: 'cover',  // Garante que a imagem se ajuste ao círculo sem distorções
+      animation: 'moveLeftRight 2s linear infinite', 
+    }} 
+  />
+</Grid>
+
+
     <Typography variant="h4" sx={{ fontWeight: "bold", textTransform: "uppercase" }}>
         Painel de Controle
     </Typography>
@@ -209,7 +227,7 @@ const Dashboard = () => {
         <CircularProgress sx={{ color: "#FFD700" }} />
     ) : resources.length > 0 ? (
         <TableContainer sx={{ backgroundColor: "#1c1c1c",borderRadius: 2, boxShadow: "0 4px 10px rgba(255, 223, 0, 0.3)", marginTop: 3 }}>
-            <Table sx={{ backgroundColor: "#1E1E1E", borderRadius: "10px" }}>
+            <Table sx={{ backgroundColor: "#1E1E1E", borderRadius: "10px"}}>
                 <TableHead>
                     <TableRow sx={{ backgroundColor: "#333", color: "#FFD700" }}>
                         <TableCell sx={{ fontWeight: "bold", color: "#FFD700" }}>Nome</TableCell>
@@ -478,59 +496,67 @@ const Dashboard = () => {
                     </Card>
                 </Grid>
                 </Grid>
-                <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                <Grid item xs={12} md={12}>
-                </Grid>
-                    <Card>
-                    <CardContent>
-                    <Typography variant="h6" align="center">Status dos Recursos</Typography>
-                    <Paper 
-                        sx={{ 
-                            padding: 2, 
-                            display: "flex", 
-                            flexDirection: "column", 
-                            alignItems: "center", 
-                            justifyContent: "center", 
-                            width: "100%" 
-                        }}
-                        >
-                    {/* Gráfico de Pizza */}
-                    <Grid 
-                        container 
-                        
-                        justifyContent="center" 
-                        alignItems="center" 
-                        sx={{ width: "100%", display: "flex" }}
-                    >
-                        <Grid item xs={12} sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <PieChart>
-                            <Pie 
-                                data={pieData} 
-                                dataKey="count" 
-                                nameKey="status" 
-                                cx="50%" 
-                                cy="50%" 
-                                outerRadius={100}
-                            >
-                                {pieData.map((item, index) => {
-                                let fillColor = "#ccc"; // Cor padrão
-                                // Alterando cores conforme o status
-                                if (item.status === "Em manutenção") {
-                                    fillColor = "yellow"; // Amarelo para "Em manutenção"
-                                } else if (item.status === "Disponível") {
-                                    fillColor = "green"; // Verde para "Disponível"
-                                } else if (item.status === "Fora de uso") {
-                                    fillColor = "red";
-                                }
-                                return <Cell key={index} fill={fillColor} />;
-                                })}
-                            </Pie>
-                            <Tooltip />
-                            <Legend />
-                            </PieChart>
-                        </ResponsiveContainer>
-            </Grid>
+                
+                                    <Paper 
+                                        sx={{ 
+                                            padding: -1, 
+                                            display: "flex", 
+                                            flexDirection: "column", 
+                                            alignItems: "center", 
+                                            justifyContent: "center", 
+                                            width: "100%", 
+                                            backgroundColor: '#1A1A1A',
+                                            color: 'white',
+                                            borderRadius: '8px'
+                                        }}
+                                    >
+                                    <Typography variant="h6" align="center" sx={{ color: '#FFD700' }}>
+                                    Status dos Recursos
+                                    </Typography>
+
+                                    {/* Grid container para o gráfico */}
+                                    <Grid container justifyContent="center" alignItems="center" sx={{
+                                    padding: 5, 
+                                    margin: "20px", 
+                                    backgroundColor: "#1c1c1c", 
+                                    color: "#f5f5f5", 
+                                    borderRadius: 2, 
+                                    boxShadow: "0px 0px 10px #ffcc00" 
+                                    }}>
+
+                                    {/* Grid item para o gráfico */}
+                                    <Grid item xs={12} md={9} sx={{ display: "flex", justifyContent: "center" }}>
+                                        <ResponsiveContainer width="100%" height={300}>
+                                        <PieChart>
+                                            <Pie 
+                                            data={pieData} 
+                                            dataKey="count" 
+                                            nameKey="status" 
+                                            cx="50%" 
+                                            cy="50%" 
+                                            outerRadius={100}
+                                            >
+                                            {pieData.map((item, index) => {
+                                                let fillColor = "#ccc"; 
+                                                if (item.status === "Em manutenção") {
+                                                fillColor = "yellow";
+                                                } else if (item.status === "Disponível") {
+                                                fillColor = "green";
+                                                } else if (item.status === "Fora de uso") {
+                                                fillColor = "red";
+                                                }
+                                                return <Cell key={index} fill={fillColor} />;
+                                            })}
+                                            </Pie>
+                                            <Tooltip />
+                                            <Legend />
+                                        </PieChart>
+                                        </ResponsiveContainer>
+                                    </Grid>
+                                    
+                                    </Grid>
+
+                                    </Paper>            
                {/* Lista de Recursos */}
                <Grid 
     container 
@@ -539,7 +565,7 @@ const Dashboard = () => {
     sx={{
         padding: -4,
         margin: "20px",
-        marginLeft: "-15px",
+        marginLeft: "1px",
         textAlign: "center",
         backgroundColor: "#121212",
         color: "#FFD700",
@@ -584,13 +610,9 @@ const Dashboard = () => {
         </Table>
       </Paper>
     </Grid>
-  </Grid>
-                </Grid>
-                </Paper>
-                </CardContent>
-                                    </Card>
-                                </Grid>
-                            <Grid container 
+  </Grid>                                  
+                               
+    <Grid container 
     justifyContent="center" 
     alignItems="center" 
     sx={{
