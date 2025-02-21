@@ -20,6 +20,13 @@ const Login = () => {
       localStorage.setItem("token", data.token); // Salva o token
       console.log("Login bem-sucedido, token salvo:", data.token);
 
+      // Recuperar a quantidade de acessos aprovados do localStorage ou definir como 0
+      let approvedCount = parseInt(localStorage.getItem("approvedCount"), 10) || 0;
+
+      // Atualiza a quantidade de acessos aprovados
+      approvedCount += 1;
+      localStorage.setItem("approvedCount", approvedCount);
+
       // Se houver alertas, armazená-los no localStorage
       if (data.alerts && data.alerts.length > 0) {
         localStorage.setItem("alerts", JSON.stringify(data.alerts)); // Salva os alertas
@@ -57,6 +64,13 @@ const Login = () => {
 
         // Salva o alerta atualizado no localStorage
         localStorage.setItem("alerts", JSON.stringify(currentAlerts));
+
+        // Recuperar a quantidade de acessos negados do localStorage ou definir como 0
+        let deniedCount = parseInt(localStorage.getItem("deniedCount"), 10) || 0;
+
+        // Atualiza a quantidade de acessos negados
+        deniedCount += 1;
+        localStorage.setItem("deniedCount", deniedCount);
 
         return newAttempts; // Retorna o novo valor de tentativas falhadas
       });

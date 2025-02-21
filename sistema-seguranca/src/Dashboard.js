@@ -755,7 +755,7 @@ const Dashboard = () => {
         alertTable.map((alert, index) => (
           <tr key={index} style={{ background: index % 2 === 0 ? "#2a2a2a" : "#1c1c1c" }}>
             <td style={{ padding: "10px", color: "white", textAlign: "center" }}>
-              {new Date(alert.timestamp).toLocaleString("pt-BR")}
+              {alert.timestamp}
             </td>
             <td style={{ padding: "10px", color: "white", textAlign: "center" }}>{alert.email}</td>
             <td style={{ padding: "10px", color: "white", textAlign: "center" }}>{alert.alertMessage}</td>
@@ -778,6 +778,8 @@ const Dashboard = () => {
     </tbody>
   </table>
 </div>
+
+
 
             {/* Botão "Voltar ao Login" visível para TODOS os usuários */}
         <Button 
