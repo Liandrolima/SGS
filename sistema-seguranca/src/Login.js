@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { api } from "./servicos/api";
+import React, { useState } from "react"; 
+import { api } from "./servicos/api"; // Seu arquivo API
 import { useNavigate } from "react-router-dom";
-import imagemLogin from './imagens/imagem-login.png';
-import './Login.css';
+import imagemLogin from './imagens/imagem-login.png'; // Importando a imagem
+import './Login.css'; // Certifique-se de importar o CSS
 
-const Login = ({ setAlertTable }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [setFailedAttempts] = useState(0);
+  const [failedAttempts, setFailedAttempts] = useState(0); // Estado para o número de tentativas falhadas
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -16,16 +16,24 @@ const Login = ({ setAlertTable }) => {
     setError("");
 
     try {
-      const data = await api.login(email, password);
-      localStorage.setItem("token", data.token);
+      const data = await api.login(email, password); // Tentativa de login via API
+      localStorage.setItem("token", data.token); // Salva o token
       console.log("Login bem-sucedido, token salvo:", data.token);
-      setFailedAttempts(0); // Reset ao sucesso
-      navigate("/dashboard");
+
+      // Se houver alertas, armazená-los no localStorage
+      if (data.alerts && data.alerts.length > 0) {
+        localStorage.setItem("alerts", JSON.stringify(data.alerts)); // Salva os alertas
+      }
+
+      navigate("/dashboard"); // Redireciona para a tela principal
     } catch (err) {
       setError("Credenciais inválidas. Tente novamente.");
 
-      setFailedAttempts((prevAttempts) => {
-        const newAttempts = prevAttempts + 1;
+      // Atualizando o contador de tentativas falhadas com base no valor anterior
+      setFailedAttempts((prev) => {
+        const newAttempts = prev + 1;
+
+        // Define a mensagem e o nível de risco conforme o número de tentativas falhadas
         let alertMessage = "Tentativa de acesso negada";
         let riskLevel = "Baixo";
 
@@ -37,16 +45,20 @@ const Login = ({ setAlertTable }) => {
           riskLevel = "Alto";
         }
 
-        const alertData = {
+        // Adiciona o alerta ao localStorage
+        const currentAlerts = JSON.parse(localStorage.getItem("alerts")) || []; // Recupera alertas existentes
+        const newAlert = {
           timestamp: new Date().toLocaleString(),
-          email,
-          alertMessage,
-          riskLevel,
+          email: email,
+          alertMessage: alertMessage,
+          riskLevel: riskLevel,
         };
+        currentAlerts.push(newAlert); // Adiciona o novo alerta
 
-        setAlertTable((prevAlerts) => [...prevAlerts, alertData]);
+        // Salva o alerta atualizado no localStorage
+        localStorage.setItem("alerts", JSON.stringify(currentAlerts));
 
-        return newAttempts;
+        return newAttempts; // Retorna o novo valor de tentativas falhadas
       });
     }
   };
@@ -54,6 +66,7 @@ const Login = ({ setAlertTable }) => {
   return (
     <div className="login-container">
       {error && <p>{error}</p>}
+
       <form onSubmit={handleLogin}>
         <input
           type="email"

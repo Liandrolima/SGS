@@ -14,10 +14,10 @@ import {
 import { Box } from '@mui/material';
 
 import imagemLogin from './imagens/batmancarro.png'; // Importe corretamente a imagem
-import './alertadeseguranca.css';
+
 import CadastroUsuario from "./CadastroUsuario";
 
-const Dashboard = ({ alerts }) => {
+const Dashboard = () => {
     
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -30,14 +30,51 @@ const Dashboard = ({ alerts }) => {
         maintenanceDate: null,  // Garantir que maintenanceDate seja null inicialmente
     });
     const [newResource, setNewResource] = useState({ name: "", status: "" });
-    const [accessStats, setAccessStats] = useState({ approved: 100, denied: 250 });    
+    const [accessStats, setAccessStats] = useState({
+        approved: 0,
+        denied: 0, // Inicialmente 0 negados
+      });   
     const [alertTable, setAlertTable] = useState([]);    
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-    const navigate = useNavigate();  
+    const navigate = useNavigate(); 
+    
+    useEffect(() => {
+        // Recupera a quantidade de acessos negados do localStorage
+        const deniedCount = parseInt(localStorage.getItem("deniedCount"), 10) || 0;
+        
+        // Defina um valor fixo para o total de tentativas
+        const totalAttempts = 30; // Total de tentativas, incluindo aprovadas e negadas (ajuste conforme necessário)
+        
+        // Calcule os acessos aprovados
+        const approvedCount = totalAttempts - deniedCount; // Aprovados = Total - Negados
+      
+        setAccessStats({
+          approved: approvedCount,
+          denied: deniedCount,
+        });
+      }, []);
 
     useEffect(() => {
-        setAlertTable(alerts);
-      }, [alerts]);
+       /* localStorage.removeItem("alerts");*/
+            // Ou, se você quiser limpar apenas a parte dos alertas/*
+        /*  localStorage.setItem("alerts", JSON.stringify([])); // Limpa os alertas do localStorage
+            // Ou, se você quiser limpar apenas a parte dos alertas 
+        */
+        // Carregar alertas do localStorage
+        const alertsFromStorage = JSON.parse(localStorage.getItem("alerts"));
+        console.log("Alertas carregados:", alertsFromStorage);
+    
+        if (alertsFromStorage) {
+          setAlertTable(alertsFromStorage); // Atualizar o estado com os alertas carregados
+        }
+      }, []); 
+      const resetAlerts = () => {
+        localStorage.setItem("alerts", JSON.stringify([])); // Limpa todos os alertas
+        setAlertTable([]); // Atualiza o estado da tabela para vazio
+        console.log("Alertas resetados");
+      };
+
+    
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) return navigate("/");
@@ -472,24 +509,25 @@ const Dashboard = ({ alerts }) => {
 
             {(userRole === "admin" || userRole === "gerente") && <CadastroUsuario />}
             <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                <Grid item xs={12}>
-                    <Card>
-                        <CardContent>
-                            <Typography variant="h6">Acessos Restritos</Typography>
-                            <ResponsiveContainer width="100%" height={250}>
-                                <BarChart data={[{ name: "Acessos", ...accessStats, ...setAccessStats }]}> 
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Bar dataKey="approved" fill="#4CAF50" name="Aprovados" />
-                                    <Bar dataKey="denied" fill="#F44336" name="Negados" />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                </Grid>
+  <Grid item xs={12}>
+    <Card>
+      <CardContent>
+        <Typography variant="h6">Acessos Restritos</Typography>
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={[{ name: "Acessos", ...accessStats }]}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="approved" fill="#4CAF50" name="Aprovados" />
+            <Bar dataKey="denied" fill="#F44336" name="Negados" />
+          </BarChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  </Grid>
+</Grid>
+
                 
                                     <Paper 
                                         sx={{ 
@@ -671,37 +709,76 @@ const Dashboard = ({ alerts }) => {
   </TableContainer>
   </Grid>
 
-        <div>
-      <h2>Alertas de Segurança</h2>
+  <div style={{
+  background: "#1c1c1c",
+  color: "white",
+  padding: "20px",
+  borderRadius: "12px",
+  boxShadow: "0px 0px 10px rgba(255, 215, 0, 0.3)"
+}}>
+  <button 
+    onClick={resetAlerts} 
+    style={{
+      background: "#FFD700",
+      color: "#1c1c1c",
+      border: "none",
+      padding: "10px 15px",
+      borderRadius: "6px",
+      fontWeight: "bold",
+      cursor: "pointer",
+      transition: "0.3s",
+      marginBottom: "15px"
+    }}
+  >
+    Resetar Alertas
+  </button>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Data e Hora</th>
-            <th>Email</th>
-            <th>Mensagem</th>
-            <th>Nível de Risco</th>
+  <h2 style={{ color: "#FFD700", marginBottom: "15px" }}>⚠️ Alertas de Segurança</h2>
+
+  <table style={{
+    width: "100%",
+    borderCollapse: "collapse",
+    background: "#333",
+    borderRadius: "8px",
+    overflow: "hidden"
+  }}>
+    <thead>
+      <tr style={{ background: "#222" }}>
+        <th style={{ padding: "10px", color: "#FFD700", borderBottom: "2px solid #FFD700" }}>Data e Hora</th>
+        <th style={{ padding: "10px", color: "#FFD700", borderBottom: "2px solid #FFD700" }}>Email</th>
+        <th style={{ padding: "10px", color: "#FFD700", borderBottom: "2px solid #FFD700" }}>Mensagem</th>
+        <th style={{ padding: "10px", color: "#FFD700", borderBottom: "2px solid #FFD700" }}>Nível de Risco</th>
+      </tr>
+    </thead>
+    <tbody>
+      {alertTable && alertTable.length > 0 ? (
+        alertTable.map((alert, index) => (
+          <tr key={index} style={{ background: index % 2 === 0 ? "#2a2a2a" : "#1c1c1c" }}>
+            <td style={{ padding: "10px", color: "white", textAlign: "center" }}>
+              {new Date(alert.timestamp).toLocaleString("pt-BR")}
+            </td>
+            <td style={{ padding: "10px", color: "white", textAlign: "center" }}>{alert.email}</td>
+            <td style={{ padding: "10px", color: "white", textAlign: "center" }}>{alert.alertMessage}</td>
+            <td style={{
+              padding: "10px",
+              fontWeight: "bold",
+              textAlign: "center",
+              color: alert.riskLevel === "Alto" ? "red" : 
+                     alert.riskLevel === "Médio" ? "orange" : "green"
+            }}>
+              {alert.riskLevel}
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {alertTable.length > 0 ? (
-            alertTable.map((alert, index) => (
-              <tr key={index}>
-                <td>{alert.timestamp}</td>
-                <td>{alert.email}</td>
-                <td>{alert.alertMessage}</td>
-                <td>{alert.riskLevel}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="4">Nenhum alerta encontrado</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-          
+        ))
+      ) : (
+        <tr>
+          <td colSpan="4" style={{ textAlign: "center", padding: "10px", color: "gray" }}>Nenhum alerta encontrado</td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
             {/* Botão "Voltar ao Login" visível para TODOS os usuários */}
         <Button 
             variant="outlined" 
