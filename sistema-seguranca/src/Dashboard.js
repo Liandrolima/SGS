@@ -39,20 +39,23 @@ const Dashboard = () => {
     const navigate = useNavigate(); 
     
     useEffect(() => {
-        // Recupera a quantidade de acessos negados do localStorage
-        const deniedCount = parseInt(localStorage.getItem("deniedCount"), 10) || 0;
+      const deniedCount = parseInt(localStorage.getItem("deniedCount"), 10) || 0;
+      const approvedCount = 10 - deniedCount; // Ajuste conforme necessário
+      setAccessStats({
+        approved: approvedCount,
+        denied: deniedCount,
+      });
+    }, []);
+
+      const resetAccessCounts = () => {
+        localStorage.removeItem("deniedCount");
+        localStorage.removeItem("approvedCount");
         
-        // Defina um valor fixo para o total de tentativas
-        const totalAttempts = 30; // Total de tentativas, incluindo aprovadas e negadas (ajuste conforme necessário)
-        
-        // Calcule os acessos aprovados
-        const approvedCount = totalAttempts - deniedCount; // Aprovados = Total - Negados
-      
         setAccessStats({
-          approved: approvedCount,
-          denied: deniedCount,
+          approved: 0,
+          denied: 0,
         });
-      }, []);
+      };
 
     useEffect(() => {
        /* localStorage.removeItem("alerts");*/
@@ -510,9 +513,27 @@ const Dashboard = () => {
             {(userRole === "admin" || userRole === "gerente") && <CadastroUsuario />}
             <Grid container spacing={2} sx={{ marginTop: 2 }}>
   <Grid item xs={12}>
-    <Card>
+    <Card sx={{ backgroundColor: "#1c1c1c", color: "white", borderRadius: "12px", boxShadow: "0px 0px 10px rgba(255, 215, 0, 0.3)" }}>
       <CardContent>
-        <Typography variant="h6">Acessos Restritos</Typography>
+        <button
+          onClick={resetAccessCounts}
+          style={{
+            background: "#FFD700", 
+            color: "#1c1c1c", 
+            border: "none", 
+            padding: "10px 15px", 
+            borderRadius: "6px", 
+            fontWeight: "bold", 
+            cursor: "pointer", 
+            transition: "0.3s", 
+            marginBottom: "15px"
+          }}
+        >
+          Resetar Contagem de Acessos
+        </button>
+        <Typography variant="h6" sx={{ color: "#FFD700", marginBottom: "15px" }}>
+          Acessos Restritos
+        </Typography>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={[{ name: "Acessos", ...accessStats }]}>
             <XAxis dataKey="name" />
@@ -528,7 +549,7 @@ const Dashboard = () => {
   </Grid>
 </Grid>
 
-                
+      
                                     <Paper 
                                         sx={{ 
                                             padding: -1, 
@@ -778,9 +799,6 @@ const Dashboard = () => {
     </tbody>
   </table>
 </div>
-
-
-
             {/* Botão "Voltar ao Login" visível para TODOS os usuários */}
         <Button 
             variant="outlined" 
