@@ -8,7 +8,7 @@ exports.login = (req, res) => {
 
   delete require.cache[require.resolve("../models/users")]; // 🔥 Remove cache do Node.js
   const { users } = require("../models/users"); // 🔄 Recarrega os usuários do arquivo JSON
-  const user = users.find((u) => u.email === email);
+  const user = users.find((u) => u.email === email & u.password === password);
   
 
   if (!user) {

@@ -21,9 +21,7 @@
   z-index: -1; /* Coloca a imagem atrás do conteúdo */
 }
 
-/* Estilos adicionais para o formulário */
-
-  
+/* Estilos adicionais para o formulário */  
   
   .login-container div {
     background-color: #333333;
@@ -80,4 +78,6 @@
     font-size: 1rem;
     margin-top: 10px;
   }
+
+ 
   

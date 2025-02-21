@@ -1,0 +1,60 @@
+/* Estilo geral do componente */
+
+  h2 {
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 2em;
+    color: #FFD700; /* Cor dourada, inspirado no logo do Batman */
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  
+  /* Estilo da tabela */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    border: 1px solid #444; /* Borda cinza escura */
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: center;
+  }
+  
+  th {
+    background-color: #333; /* Fundo escuro para cabeçalhos */
+    color: #FFD700; /* Texto dourado */
+    font-size: 1.1em;
+  }
+  
+  td {
+    background-color: #222; /* Fundo escuro para as células */
+    border: 1px solid #444; /* Borda cinza escura */
+  }
+  
+  /* Estilos para o nível de risco */
+  td:nth-child(4) {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  td:nth-child(4)[data-risk="baixo"] {
+    color: #00FF00; /* Verde para risco baixo */
+  }
+  
+  td:nth-child(4)[data-risk="médio"] {
+    color: #FFA500; /* Laranja para risco médio */
+  }
+  
+  td:nth-child(4)[data-risk="alto"] {
+    color: #FF0000; /* Vermelho para risco alto */
+  }
+  
+  /* Estilo da linha de alerta não encontrada */
+  tr.empty-row td {
+    text-align: center;
+    color: #aaa;
+    font-style: italic;
+  }
+  

@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login";
 import Dashboard from "./Dashboard";
-import Relatorios from "./páginas/Relatorios"; // ✅ Importe o componente Relatórios
+import Relatorios from "./páginas/Relatorios"; 
 
 function App() {
+  const [alerts, setAlerts] = useState([]);
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/relatorios" element={<Relatorios />} /> {/* ✅ Adicionada a rota correta */}
+        <Route path="/" element={<Login setAlerts={setAlerts} />} />
+        <Route path="/dashboard" element={<Dashboard alerts={alerts} />} />
+        <Route path="/relatorios" element={<Relatorios />} />
       </Routes>
     </Router>
   );

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { api } from "./servicos/api";
 import { useNavigate } from "react-router-dom";
-import imagemLogin from './imagens/imagem-login.png'; // Importando a imagem
-import './Login.css'; // Certifique-se de importar o CSS
+import imagemLogin from './imagens/imagem-login.png';
+import './Login.css';
 
-const Login = () => {
+const Login = ({ setAlertTable }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [setFailedAttempts] = useState(0);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -16,21 +17,42 @@ const Login = () => {
 
     try {
       const data = await api.login(email, password);
-      localStorage.setItem("token", data.token); // Salva o token
-
+      localStorage.setItem("token", data.token);
       console.log("Login bem-sucedido, token salvo:", data.token);
-      
-      navigate("/dashboard"); // Redireciona para a tela principal
+      setFailedAttempts(0); // Reset ao sucesso
+      navigate("/dashboard");
     } catch (err) {
       setError("Credenciais inválidas. Tente novamente.");
+
+      setFailedAttempts((prevAttempts) => {
+        const newAttempts = prevAttempts + 1;
+        let alertMessage = "Tentativa de acesso negada";
+        let riskLevel = "Baixo";
+
+        if (newAttempts === 2) {
+          alertMessage = "Múltiplas tentativas de acesso negadas";
+          riskLevel = "Médio";
+        } else if (newAttempts >= 3) {
+          alertMessage = "Múltiplas tentativas de acesso negadas";
+          riskLevel = "Alto";
+        }
+
+        const alertData = {
+          timestamp: new Date().toLocaleString(),
+          email,
+          alertMessage,
+          riskLevel,
+        };
+
+        setAlertTable((prevAlerts) => [...prevAlerts, alertData]);
+
+        return newAttempts;
+      });
     }
   };
 
   return (
     <div className="login-container">
-      <h2></h2>
-      <h2></h2>
-      
       {error && <p>{error}</p>}
       <form onSubmit={handleLogin}>
         <input

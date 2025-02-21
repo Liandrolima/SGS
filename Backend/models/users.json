@@ -17,7 +17,22 @@
   {
     "email": "ka@ka",
     "password": "123",
-    "role": "admin"
+    "role": "admin",
+    "failedLoginAttempts": 3,
+    "alerts": [
+      {
+        "message": "Tentativa de acesso negada",
+        "level": "Baixo"
+      },
+      {
+        "message": "Múltiplas tentativas de acesso negadas",
+        "level": "Médio"
+      },
+      {
+        "message": "Múltiplas tentativas de acesso negadas",
+        "level": "Alto"
+      }
+    ]
   },
   {
     "email": "go@go",
@@ -28,5 +43,10 @@
     "email": "pedro@pr",
     "password": "123",
     "role": "admin"
+  },
+  {
+    "email": "jo@jo",
+    "password": "246",
+    "role": "Funcionario"
   }
 ]

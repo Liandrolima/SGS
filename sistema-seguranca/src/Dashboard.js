@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { api } from "./servicos/api";
 import { 
@@ -13,14 +12,12 @@ import {
     PieChart, Pie, Cell 
 } from "recharts";
 import { Box } from '@mui/material';
-import './dashboardStyles.js';
-import imagemLogin from './imagens/batmancarro.png'; // Importe corretamente a imagem
 
+import imagemLogin from './imagens/batmancarro.png'; // Importe corretamente a imagem
+import './alertadeseguranca.css';
 import CadastroUsuario from "./CadastroUsuario";
 
-const COLORS = ["#ff0000", "#00ff00", "#0000ff", "#ff00ff"]; 
-
-const Dashboard = () => {
+const Dashboard = ({ alerts }) => {
     
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,14 +30,14 @@ const Dashboard = () => {
         maintenanceDate: null,  // Garantir que maintenanceDate seja null inicialmente
     });
     const [newResource, setNewResource] = useState({ name: "", status: "" });
-    const [accessStats, setAccessStats] = useState({ approved: 100, denied: 250 });
-    const [latestActivities, setLatestActivities] = useState([]);
-    const [alerts, setAlerts] = useState([]);
-    const [usageStats] = useState([]);
-    const [userActivityStats] = useState([]);
+    const [accessStats, setAccessStats] = useState({ approved: 100, denied: 250 });    
+    const [alertTable, setAlertTable] = useState([]);    
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-    const navigate = useNavigate();
-    const token = localStorage.getItem('token');
+    const navigate = useNavigate();  
+
+    useEffect(() => {
+        setAlertTable(alerts);
+      }, [alerts]);
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) return navigate("/");
@@ -125,8 +122,7 @@ const Dashboard = () => {
         }
     };    
     // Dentro do componente
-    const maintenanceStatus = getMaintenanceDateStatus(editingResource?.maintenanceDate); // Usa optional chaining para evitar erro se editingResource for null
-    const maintenancenewStatus = getMaintenanceDateStatus(newResource?.maintenanceDate);
+    const maintenanceStatus = getMaintenanceDateStatus(editingResource?.maintenanceDate); // Usa optional chaining para evitar erro se editingResource for null    
     console.log(maintenanceStatus?.color);
     const handleSaveEdit = async () => {
         if (!editingResource || !editingResource.id) {
@@ -164,9 +160,7 @@ const Dashboard = () => {
       };
       
       // Chamando o pré-processamento e gerando o processedData
-      const processedData = preprocessData(pieData, resources);
-      
-          
+      const processedData = preprocessData(pieData, resources);       
 
     return (
         
@@ -677,69 +671,46 @@ const Dashboard = () => {
   </TableContainer>
   </Grid>
 
-            <Typography variant="h5" sx={{ marginTop: 4 }}>Atividades por Tipo de Usuário</Typography>
-            <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={userActivityStats}>
-                    <XAxis dataKey="userType" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="activityCount" fill="#8884d8" name="Atividades" />
-                </BarChart>
-            </ResponsiveContainer>
-            {/* Últimas Atividades */}
-            <Typography variant="h5" sx={{ marginTop: 4 }}>Últimas Atividades</Typography>
-            <ul>
-            {latestActivities.map((activity) => (
-                <li key={activity.id}>
-                {activity.message} - <span style={{ fontStyle: 'italic', color: 'gray' }}>
-                    {activity.timestamp ? new Date(activity.timestamp).toLocaleString('pt-BR', { timeZoneName: 'short' }) : "Sem horário"}
-                </span>
-                </li>
-            ))}
-            </ul>
-            {/* Alertas de Segurança */}
-            <Typography variant="h5" sx={{ marginTop: 4 }}>
-            🚨 Alertas de Segurança
-            </Typography>
-            {alerts.length === 0 ? (
-            <Typography color="gray">Nenhum alerta no momento.</Typography>
-            ) : (
-            <div style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '8px', marginBottom: '20px' }}>
-                {alerts.map((alert) => {
-                let alertColor = "green"; // Default (sem gravidade)
-                if (alert.level === "Alta") alertColor = "red";
-                if (alert.level === "Média") alertColor = "orange";
+        <div>
+      <h2>Alertas de Segurança</h2>
 
-                return (
-                    <Typography
-                    key={alert.id}
-                    sx={{
-                        backgroundColor: alertColor,
-                        color: 'white',
-                        padding: '8px',
-                        borderRadius: '5px',
-                        marginBottom: '5px'
-                    }}
-                    >
-                    {alert.message} - <strong>{alert.level}</strong>
-                    - <span style={{ fontStyle: 'italic' }}>
-                        {alert.timestamp ? new Date(alert.timestamp).toLocaleString('pt-BR', { timeZoneName: 'short' }) : "Sem horário"}
-                    </span>
-                    </Typography>
-                );
-                })}
-            </div>
-            )}
+      <table>
+        <thead>
+          <tr>
+            <th>Data e Hora</th>
+            <th>Email</th>
+            <th>Mensagem</th>
+            <th>Nível de Risco</th>
+          </tr>
+        </thead>
+        <tbody>
+          {alertTable.length > 0 ? (
+            alertTable.map((alert, index) => (
+              <tr key={index}>
+                <td>{alert.timestamp}</td>
+                <td>{alert.email}</td>
+                <td>{alert.alertMessage}</td>
+                <td>{alert.riskLevel}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4">Nenhum alerta encontrado</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+          
             {/* Botão "Voltar ao Login" visível para TODOS os usuários */}
-            <Button 
-                variant="outlined" 
-                color="secondary" 
-                onClick={handleLogout} 
-                sx={{ marginTop: 2 }}
-            >
-                Voltar ao Login
-            </Button>
+        <Button 
+            variant="outlined" 
+            color="secondary" 
+            onClick={handleLogout} 
+            sx={{ marginTop: 2, color: 'white', borderColor: '#FFD700' }}
+        >
+            Voltar ao Login
+        </Button>
         </Paper>
     );
 };
