@@ -48,14 +48,26 @@ const Dashboard = () => {
     }, []);
 
       const resetAccessCounts = () => {
-        localStorage.removeItem("deniedCount");
-        localStorage.removeItem("approvedCount");
-        
-        setAccessStats({
-          approved: 0,
-          denied: 0,
-        });
-      };
+  // Recuperar o perfil do usuário do localStorage
+  const userRole = localStorage.getItem("userRole"); // Supondo que o perfil esteja armazenado assim
+
+  // Verifica se o usuário é um administrador
+  if (userRole === "admin") {
+    localStorage.removeItem("deniedCount"); // Remove contagem de acessos negados
+    localStorage.removeItem("approvedCount"); // Remove contagem de acessos aprovados
+
+    setAccessStats({
+      approved: 0,  // Reseta os contadores para 0
+      denied: 0,
+    });
+
+    console.log("Contadores de acessos resetados");
+  } else {
+    // Caso o usuário não seja admin, exibe um aviso
+    console.log("Você não tem permissão para resetar os contadores de acessos.");
+    alert("Apenas administradores podem resetar os contadores de acessos.");
+  }
+};
 
     useEffect(() => {
        /* localStorage.removeItem("alerts");*/
@@ -71,12 +83,22 @@ const Dashboard = () => {
           setAlertTable(alertsFromStorage); // Atualizar o estado com os alertas carregados
         }
       }, []); 
-      const resetAlerts = () => {
-        localStorage.setItem("alerts", JSON.stringify([])); // Limpa todos os alertas
-        setAlertTable([]); // Atualiza o estado da tabela para vazio
-        console.log("Alertas resetados");
-      };
+      
 
+    useEffect(() => {
+  const role = localStorage.getItem("userRole");
+  setUserRole(role); // Atualiza o estado com o valor salvo no localStorage
+}, []);
+
+
+
+  // Verifica se o usuário é um administrador
+  const resetAlerts = () => {  
+    localStorage.setItem("alerts", JSON.stringify([])); // Limpa todos os alertas
+    setAlertTable([]); // Atualiza o estado da tabela para vazio
+    console.log("Alertas resetados");
+    
+  };
     
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -201,7 +223,7 @@ const Dashboard = () => {
       
       // Chamando o pré-processamento e gerando o processedData
       const processedData = preprocessData(pieData, resources);       
-
+      
     return (
         
         <Paper
@@ -563,10 +585,6 @@ const Dashboard = () => {
                                             borderRadius: '8px'
                                         }}
                                     >
-                                    <Typography variant="h6" align="center" sx={{ color: '#FFD700' }}>
-                                    Status dos Recursos
-                                    </Typography>
-
                                     {/* Grid container para o gráfico */}
                                     <Grid container justifyContent="center" alignItems="center" sx={{
                                     padding: 5, 
@@ -576,7 +594,17 @@ const Dashboard = () => {
                                     borderRadius: 2, 
                                     boxShadow: "0px 0px 10px #ffcc00" 
                                     }}>
-
+                                      <Typography 
+                                    variant="h6" 
+                                    align="center" 
+                                    sx={{ 
+                                      color: '#FFD700', 
+                                      fontSize: '2.0rem', 
+                                      fontFamily: '"Bangers", sans-serif', // Aqui você define a fonte inspirada no Batman
+                                    }}
+                                  >
+                                    Status dos Recursos
+                                  </Typography>
                                     {/* Grid item para o gráfico */}
                                     <Grid item xs={12} md={9} sx={{ display: "flex", justifyContent: "center" }}>
                                         <ResponsiveContainer width="100%" height={300}>

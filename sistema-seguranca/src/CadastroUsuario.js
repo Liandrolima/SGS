@@ -103,7 +103,7 @@ const CadastroUsuario = () => {
               label: { color: "#fdd835" }
           }}
       >
-          <option value="Administrador">Administrador(a)</option>
+          <option value="admin">Administrador(a)</option>
           <option value="Gerente">Gerente</option>
           <option value="Funcionario">Funcionário(a)</option>
       </TextField>
