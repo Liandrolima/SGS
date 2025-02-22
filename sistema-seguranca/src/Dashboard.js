@@ -49,7 +49,7 @@ const Dashboard = () => {
 
       const resetAccessCounts = () => {
   // Recuperar o perfil do usuário do localStorage
-  const userRole = localStorage.getItem("userRole"); // Supondo que o perfil esteja armazenado assim
+   // Supondo que o perfil esteja armazenado assim
 
   // Verifica se o usuário é um administrador
   if (userRole === "admin") {
@@ -94,10 +94,15 @@ const Dashboard = () => {
 
   // Verifica se o usuário é um administrador
   const resetAlerts = () => {  
+    if (userRole === "admin") {
     localStorage.setItem("alerts", JSON.stringify([])); // Limpa todos os alertas
     setAlertTable([]); // Atualiza o estado da tabela para vazio
     console.log("Alertas resetados");
-    
+    }else {
+      // Caso o usuário não seja admin, exibe um aviso
+      console.log("Você não tem permissão para resetar os Alertas.");
+      alert("Apenas administradores podem resetar os Alertas.");
+    } 
   };
     
     useEffect(() => {
