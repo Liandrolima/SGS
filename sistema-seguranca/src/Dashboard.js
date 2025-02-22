@@ -22,13 +22,7 @@ const Dashboard = () => {
     const [resources, setResources] = useState([]);
     const [loading, setLoading] = useState(true);
     const [userRole, setUserRole] = useState(null);
-    const [editingResource, setEditingResource] = useState({
-        name: '',
-        status: '',
-        serialNumber: '',
-        id: null,
-        maintenanceDate: null,  // Garantir que maintenanceDate seja null inicialmente
-    });
+    const [editingResource, setEditingResource] = useState(null);
     const [newResource, setNewResource] = useState({ name: "", status: "" });
     const [accessStats, setAccessStats] = useState({
         approved: 0,
@@ -174,7 +168,9 @@ const Dashboard = () => {
         count: names.length,
         resources: names.join(", "), // Lista de recursos com esse status
     }));
+
     const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
+
     const getMaintenanceDateStatus = (maintenanceDate) => {
         if (!maintenanceDate) return { color: 'white', text: 'Sem manutenção' }; // Se não houver data, retorna 'Sem manutenção' e cor branca    
         const currentDate = new Date();
@@ -189,7 +185,8 @@ const Dashboard = () => {
         }
     };    
     // Dentro do componente
-    const maintenanceStatus = getMaintenanceDateStatus(editingResource?.maintenanceDate); // Usa optional chaining para evitar erro se editingResource for null    
+    const maintenanceStatus = getMaintenanceDateStatus(editingResource?.maintenanceDate); // Usa optional chaining para evitar erro se editingResource for null  
+      
     console.log(maintenanceStatus?.color);
     const handleSaveEdit = async () => {
         if (!editingResource || !editingResource.id) {

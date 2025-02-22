@@ -108,8 +108,8 @@ module.exports = [
   },
   {
     "name": "Máquina005",
-    "status": "Em manutenção",
-    "maintenanceDate": "2025-02-19T03:10:54.136Z",
+    "status": "Fora de uso",
+    "maintenanceDate": "2025-02-22T17:53:12.672Z",
     "serialNumber": "SN-125793",
     "id": 33
   },
@@ -123,10 +123,17 @@ module.exports = [
   },
   {
     "name": "Máquina012",
-    "status": "Disponível",
-    "maintenanceDate": "2025-02-19T19:00:33.219Z",
+    "status": "Em manutenção",
+    "maintenanceDate": "2025-02-22T17:55:43.706Z",
     "availabilityDate": "2025-02-19T19:00:52.394Z",
     "serialNumber": "SN-454094",
     "id": 35
+  },
+  {
+    "name": "Máquina0013",
+    "status": "Disponível",
+    "maintenanceDate": "2025-02-22T18:13:55.045Z",
+    "serialNumber": "SN-995200",
+    "id": 36
   }
 ];
