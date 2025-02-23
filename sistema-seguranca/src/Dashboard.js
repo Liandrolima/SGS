@@ -356,7 +356,7 @@ const Dashboard = () => {
             align="center"
             sx={{ marginTop: -1, color: "#FFD700", fontWeight: "bold" }}
           >
-            Painel de Recursoss
+            Painel de Recursos
           </Typography>
           <Table sx={{ backgroundColor: "#1E1E1E", borderRadius: "10px" }}>
             <TableHead>
@@ -530,7 +530,7 @@ const Dashboard = () => {
                 InputLabelProps={{ style: { color: "#000" } }}
               />
               <Typography variant="body2" sx={{ color: "#000", marginLeft: 1 }}>
-                Em manutenção
+              {maintenanceStatus.text}
               </Typography>
             </Box>
           )}
