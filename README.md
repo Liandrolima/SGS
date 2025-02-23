@@ -37,8 +37,8 @@ O sistema permite que os usuários façam login utilizando um **e-mail** e **sen
 
 **Restrições de Acesso**:  
 - **Admin**: Acesso completo, podendo editar, remover recursos e visualizar todas as informações.
-- **Gerente**: Acesso completo, podendo editar, remover recursos e visualizar todas as informações.
-- **Usuário comum**: Apenas pode visualizar dados, mas não pode alterar configurações.
+- **Gerente**: Pode editar, remover recursos, Pode adicionar novos recursos, não tem permissão para resetar, não tem permissão para adicionar novos usuários, tem acesso as telas: acessos restritos, status dos recursos, recursos por status, recursos mais utilizados e alertas de segurança.
+- **Usuário comum**: Tem acesso as telas: painel de recursos, recursos mais utilizados. Não tem permissão para resetar, não tem permissão para adicionar novos usuários, não tem permisão para editar recursos, remover recursos.
 
 ### 3. Tentativas de Login e Alertas
 - **Tentativas de login**: O sistema registra todas as tentativas de login, sejam bem-sucedidas ou falhas. Após várias tentativas falhas, são gerados alertas de segurança para monitoramento.

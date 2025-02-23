@@ -351,6 +351,13 @@ const Dashboard = () => {
             marginTop: 3,
           }}
         >
+          <Typography
+            variant="h6"
+            align="center"
+            sx={{ marginTop: -1, color: "#FFD700", fontWeight: "bold" }}
+          >
+            Painel de Recursoss
+          </Typography>
           <Table sx={{ backgroundColor: "#1E1E1E", borderRadius: "10px" }}>
             <TableHead>
               <TableRow sx={{ backgroundColor: "#333", color: "#FFD700" }}>
@@ -558,170 +565,169 @@ const Dashboard = () => {
         </Paper>
       )}
 
-      {userRole === "admin" ||
-        (userRole === "gerente" && (
-          <Paper
+      {(userRole === "admin" || userRole === "gerente") && (
+        <Paper
+          sx={{
+            padding: 3,
+            margin: "20px",
+            backgroundColor: "#1c1c1c",
+            color: "#f5f5f5",
+            borderRadius: 2,
+            boxShadow: "0px 0px 10px #ffcc00",
+          }}
+        >
+          <Typography variant="h5" sx={{ color: "#ffcc00" }}>
+            Adicionar Novo Recurso
+          </Typography>
+
+          {/* Nome do recurso */}
+          <TextField
+            fullWidth
+            label="Nome"
+            value={newResource.name}
+            onChange={(e) =>
+              setNewResource({ ...newResource, name: e.target.value })
+            }
             sx={{
-              padding: 3,
-              margin: "20px",
-              backgroundColor: "#1c1c1c",
-              color: "#f5f5f5",
-              borderRadius: 2,
-              boxShadow: "0px 0px 10px #ffcc00",
+              backgroundColor: "#333",
+              borderRadius: 1,
+              input: { color: "#f5f5f5" },
+            }}
+            InputLabelProps={{ style: { color: "#F8D210" } }}
+          />
+
+          {/* Status do recurso */}
+          <TextField
+            fullWidth
+            label="Status"
+            select
+            value={newResource.status}
+            onChange={(e) => {
+              const newStatus = e.target.value;
+              let newResourceCopy = { ...newResource, status: newStatus };
+
+              if (newStatus === "Em manutenção") {
+                if (!newResourceCopy.maintenanceDate) {
+                  newResourceCopy.maintenanceDate = new Date().toISOString();
+                }
+              } else {
+                if (!newResourceCopy.availabilityDate) {
+                  newResourceCopy.availabilityDate = new Date().toISOString();
+                }
+              }
+
+              setNewResource(newResourceCopy);
+            }}
+            SelectProps={{
+              native: true,
+            }}
+            sx={{
+              backgroundColor: "#333",
+              color: "#FFF",
+              borderRadius: "4px",
+              marginTop: 2,
+            }}
+            InputLabelProps={{ style: { color: "#F8D210" } }}
+          >
+            <option value="Disponível">Disponível</option>
+            <option value="Em manutenção">Em manutenção</option>
+            <option value="Fora de uso">Fora de uso</option>
+          </TextField>
+
+          {/* Data em que o novo recurso ficou disponível */}
+          {newResource.status === "Disponível" && (
+            <TextField
+              fullWidth
+              label="Data de Disponibilidade"
+              value={
+                newResource.availabilityDate
+                  ? new Date(newResource.availabilityDate).toLocaleString(
+                      "pt-BR"
+                    )
+                  : ""
+              }
+              InputProps={{ readOnly: true }}
+              sx={{
+                marginTop: 2,
+                backgroundColor: "green",
+                color: "#f5f5f5",
+              }}
+            />
+          )}
+
+          {/* Data de início da manutenção */}
+          {newResource.status === "Em manutenção" && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                backgroundColor: "yellow",
+                padding: 2,
+                borderRadius: 1,
+              }}
+            >
+              <TextField
+                label="Data de Início da Manutenção"
+                value={
+                  newResource.maintenanceDate
+                    ? new Date(newResource.maintenanceDate).toLocaleString(
+                        "pt-BR"
+                      )
+                    : ""
+                }
+                InputProps={{ readOnly: true }}
+                sx={{
+                  backgroundColor: "transparent",
+                  color: "black",
+                  flexGrow: 1,
+                }}
+              />
+              <Typography
+                variant="body2"
+                sx={{ color: "black", marginLeft: 1 }}
+              >
+                Após adicionar, a manutenção vencerá em sete dias
+              </Typography>
+            </Box>
+          )}
+
+          {/* Data em que o novo recurso ficou Fora de uso */}
+          {newResource.status === "Fora de uso" && (
+            <TextField
+              fullWidth
+              label="Data Fora de Uso"
+              value={
+                newResource.availabilityDate
+                  ? new Date(newResource.availabilityDate).toLocaleString(
+                      "pt-BR"
+                    )
+                  : ""
+              }
+              InputProps={{ readOnly: true }}
+              sx={{ marginTop: 2, backgroundColor: "red", color: "#f5f5f5" }}
+            />
+          )}
+
+          {/* Botão para adicionar o novo recurso */}
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleSaveNewResource}
+            sx={{
+              marginTop: 2,
+              backgroundColor: "#ffcc00",
+              color: "#000",
+              "&:hover": { backgroundColor: "#e6b800" },
             }}
           >
-            <Typography variant="h5" sx={{ color: "#ffcc00" }}>
-              Adicionar Novo Recurso
-            </Typography>
-
-            {/* Nome do recurso */}
-            <TextField
-              fullWidth
-              label="Nome"
-              value={newResource.name}
-              onChange={(e) =>
-                setNewResource({ ...newResource, name: e.target.value })
-              }
-              sx={{
-                backgroundColor: "#333",
-                borderRadius: 1,
-                input: { color: "#f5f5f5" },
-              }}
-              InputLabelProps={{ style: { color: "#F8D210" } }}
-            />
-
-            {/* Status do recurso */}
-            <TextField
-              fullWidth
-              label="Status"
-              select
-              value={newResource.status}
-              onChange={(e) => {
-                const newStatus = e.target.value;
-                let newResourceCopy = { ...newResource, status: newStatus };
-
-                if (newStatus === "Em manutenção") {
-                  if (!newResourceCopy.maintenanceDate) {
-                    newResourceCopy.maintenanceDate = new Date().toISOString();
-                  }
-                } else {
-                  if (!newResourceCopy.availabilityDate) {
-                    newResourceCopy.availabilityDate = new Date().toISOString();
-                  }
-                }
-
-                setNewResource(newResourceCopy);
-              }}
-              SelectProps={{
-                native: true,
-              }}
-              sx={{
-                backgroundColor: "#333",
-                color: "#FFF",
-                borderRadius: "4px",
-                marginTop: 2,
-              }}
-              InputLabelProps={{ style: { color: "#F8D210" } }}
-            >
-              <option value="Disponível">Disponível</option>
-              <option value="Em manutenção">Em manutenção</option>
-              <option value="Fora de uso">Fora de uso</option>
-            </TextField>
-
-            {/* Data em que o novo recurso ficou disponível */}
-            {newResource.status === "Disponível" && (
-              <TextField
-                fullWidth
-                label="Data de Disponibilidade"
-                value={
-                  newResource.availabilityDate
-                    ? new Date(newResource.availabilityDate).toLocaleString(
-                        "pt-BR"
-                      )
-                    : ""
-                }
-                InputProps={{ readOnly: true }}
-                sx={{
-                  marginTop: 2,
-                  backgroundColor: "green",
-                  color: "#f5f5f5",
-                }}
-              />
-            )}
-
-            {/* Data de início da manutenção */}
-            {newResource.status === "Em manutenção" && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  backgroundColor: "yellow",
-                  padding: 2,
-                  borderRadius: 1,
-                }}
-              >
-                <TextField
-                  label="Data de Início da Manutenção"
-                  value={
-                    newResource.maintenanceDate
-                      ? new Date(newResource.maintenanceDate).toLocaleString(
-                          "pt-BR"
-                        )
-                      : ""
-                  }
-                  InputProps={{ readOnly: true }}
-                  sx={{
-                    backgroundColor: "transparent",
-                    color: "black",
-                    flexGrow: 1,
-                  }}
-                />
-                <Typography
-                  variant="body2"
-                  sx={{ color: "black", marginLeft: 1 }}
-                >
-                  Após adicionar, a manutenção vencerá em sete dias
-                </Typography>
-              </Box>
-            )}
-
-            {/* Data em que o novo recurso ficou Fora de uso */}
-            {newResource.status === "Fora de uso" && (
-              <TextField
-                fullWidth
-                label="Data Fora de Uso"
-                value={
-                  newResource.availabilityDate
-                    ? new Date(newResource.availabilityDate).toLocaleString(
-                        "pt-BR"
-                      )
-                    : ""
-                }
-                InputProps={{ readOnly: true }}
-                sx={{ marginTop: 2, backgroundColor: "red", color: "#f5f5f5" }}
-              />
-            )}
-
-            {/* Botão para adicionar o novo recurso */}
-            <Button
-              variant="contained"
-              color="success"
-              onClick={handleSaveNewResource}
-              sx={{
-                marginTop: 2,
-                backgroundColor: "#ffcc00",
-                color: "#000",
-                "&:hover": { backgroundColor: "#e6b800" },
-              }}
-            >
-              Adicionar
-            </Button>
-          </Paper>
-        ))}
+            Adicionar
+          </Button>
+        </Paper>
+      )}
 
       {userRole === "admin" && <CadastroUsuario />}
 
-      {(userRole === "admin" || userRole === "gerente") && (
+      {userRole === "admin" && (
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid item xs={12}>
             <Card
@@ -841,6 +847,202 @@ const Dashboard = () => {
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
+            </Grid>
+
+            {/* Tabela de Recursos por Status */}
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
+              <Paper
+                sx={{
+                  maxHeight: "220px",
+                  margin: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  padding: 2,
+                  width: { xs: "100%", sm: "500px" }, // 100% em celulares, 500px em telas maiores
+                  backgroundColor: "#1C1C1C",
+                  color: "#FFFFFF",
+                  boxShadow: "0px 4px 10px rgba(255, 215, 0, 0.5)",
+                  borderRadius: "10px",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  align="center"
+                  sx={{
+                    fontSize: { xs: "0.7rem", sm: "0.9rem", md: "1rem" },
+                    maxHeight: "40px",
+                    marginRight: 1,
+                    marginTop: -2,
+                    color: "#FFD700",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Meta dos Recursos
+                </Typography>
+                <TableContainer
+                  component="div"
+                  sx={{ width: "100%", overflow: "hidden" }}
+                ></TableContainer>
+                <TableContainer
+                  component="div"
+                  sx={{ width: "100%", overflowX: "auto" }}
+                >
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell
+                          sx={{
+                            color: "#FFD700",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                            fontSize: { xs: "0.8rem", sm: "1rem" },
+                          }}
+                        >
+                          Status
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: "#FFD700",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                            fontSize: { xs: "0.8rem", sm: "1rem" },
+                          }}
+                        >
+                          Quantidade
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: "#FFD700",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                            fontSize: { xs: "0.8rem", sm: "1rem" },
+                          }}
+                        >
+                          Porcentagem
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: "#FFD700",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                            fontSize: { xs: "0.8rem", sm: "1rem" },
+                          }}
+                        >
+                          Meta(%)
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {pieData.map((item, index) => {
+                        const total = pieData.reduce(
+                          (sum, data) => sum + data.count,
+                          0
+                        );
+                        const percentage =
+                          total > 0
+                            ? ((item.count / total) * 100).toFixed(2)
+                            : 0;
+                        const percentageText = `${percentage}%`;
+
+                        let textColor = "#FFFFFF";
+                        if (item.status === "Em manutenção")
+                          textColor = "#FFD700";
+                        else if (item.status === "Disponível")
+                          textColor = "#32CD32";
+                        else if (item.status === "Fora de uso")
+                          textColor = "#FF4500";
+
+                        let metaText = "";
+                        let metaColor = "#FFFFFF";
+                        if (item.status === "Disponível") {
+                          if (percentage >= 80) {
+                            metaText = ">= 80 Na meta";
+                            metaColor = "#32CD32"; // Verde
+                          } else {
+                            metaText = "< 80 Fora da meta";
+                            metaColor = "#FF4500"; // Vermelho
+                          }
+                        }
+
+                        if (item.status === "Em manutenção") {
+                          if (percentage <= 10) {
+                            metaText = "<= 10 Na meta";
+                            metaColor = "#32CD32"; // Verde
+                          } else {
+                            metaText = "> 10 Fora da meta";
+                            metaColor = "#FF4500"; // Vermelho
+                          }
+                        }
+
+                        if (item.status === "Fora de uso") {
+                          if (percentage <= 10) {
+                            metaText = " <= 10 Na meta";
+                            metaColor = "#32CD32"; // Verde
+                          } else {
+                            metaText = ">10 Fora da meta";
+                            metaColor = "#FF4500"; // Vermelho
+                          }
+                        }
+
+                        return (
+                          <TableRow
+                            key={index}
+                            sx={{ backgroundColor: "#2B2B2B", height: "25px" }}
+                          >
+                            <TableCell
+                              sx={{
+                                color: textColor,
+                                textAlign: "center",
+                                fontSize: { xs: "0.75rem", sm: "1rem" },
+                                padding: "5px",
+                              }}
+                            >
+                              {item.status}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                color: "#FFF",
+                                textAlign: "center",
+                                fontSize: { xs: "0.75rem", sm: "1rem" },
+                                padding: "5px",
+                              }}
+                            >
+                              {item.count}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                color: "#FFF",
+                                textAlign: "center",
+                                fontSize: { xs: "0.75rem", sm: "1rem" },
+                                padding: "5px",
+                              }}
+                            >
+                              {percentageText}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                color: metaColor,
+                                textAlign: "center",
+                                fontSize: { xs: "0.75rem", sm: "1rem" },
+                                fontWeight: "bold",
+                                padding: "5px",
+                              }}
+                            >
+                              {metaText}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
             </Grid>
           </Grid>
         </Paper>
@@ -1037,6 +1239,8 @@ const Dashboard = () => {
             padding: "20px",
             borderRadius: "12px",
             boxShadow: "0px 0px 10px rgba(255, 215, 0, 0.3)",
+            maxWidth: "100%",
+            overflowX: "auto", // Permite que a tabela role horizontalmente se necessário
           }}
         >
           <button
@@ -1051,133 +1255,127 @@ const Dashboard = () => {
               cursor: "pointer",
               transition: "0.3s",
               marginBottom: "15px",
+              width: "100%", // Em telas menores, botão ocupa toda a largura
+              maxWidth: "300px", // Evita ficar muito largo
             }}
           >
             Resetar Alertas
           </button>
 
-          <h2 style={{ color: "#FFD700", marginBottom: "15px" }}>
+          <h2
+            style={{
+              color: "#FFD700",
+              marginBottom: "15px",
+              textAlign: "center",
+            }}
+          >
             ⚠️ Alertas de Segurança
           </h2>
 
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              background: "#333",
-              borderRadius: "8px",
-              overflow: "hidden",
-            }}
-          >
-            <thead>
-              <tr style={{ background: "#222" }}>
-                <th
-                  style={{
-                    padding: "10px",
-                    color: "#FFD700",
-                    borderBottom: "2px solid #FFD700",
-                  }}
-                >
-                  Data e Hora
-                </th>
-                <th
-                  style={{
-                    padding: "10px",
-                    color: "#FFD700",
-                    borderBottom: "2px solid #FFD700",
-                  }}
-                >
-                  Email
-                </th>
-                <th
-                  style={{
-                    padding: "10px",
-                    color: "#FFD700",
-                    borderBottom: "2px solid #FFD700",
-                  }}
-                >
-                  Mensagem
-                </th>
-                <th
-                  style={{
-                    padding: "10px",
-                    color: "#FFD700",
-                    borderBottom: "2px solid #FFD700",
-                  }}
-                >
-                  Nível de Risco
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {alertTable && alertTable.length > 0 ? (
-                alertTable.map((alert, index) => (
-                  <tr
-                    key={index}
-                    style={{
-                      background: index % 2 === 0 ? "#2a2a2a" : "#1c1c1c",
-                    }}
-                  >
-                    <td
+          <div style={{ width: "100%", overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                minWidth: "500px", // Garante que a tabela não fique muito pequena
+                borderCollapse: "collapse",
+                background: "#333",
+                borderRadius: "8px",
+              }}
+            >
+              <thead>
+                <tr style={{ background: "#222" }}>
+                  {["Data e Hora", "Email", "Mensagem", "Nível de Risco"].map(
+                    (title) => (
+                      <th
+                        key={title}
+                        style={{
+                          padding: "10px",
+                          color: "#FFD700",
+                          borderBottom: "2px solid #FFD700",
+                          fontSize: "0.9rem",
+                          textAlign: "center",
+                        }}
+                      >
+                        {title}
+                      </th>
+                    )
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {alertTable && alertTable.length > 0 ? (
+                  alertTable.map((alert, index) => (
+                    <tr
+                      key={index}
                       style={{
-                        padding: "10px",
-                        color: "white",
-                        textAlign: "center",
+                        background: index % 2 === 0 ? "#2a2a2a" : "#1c1c1c",
                       }}
                     >
-                      {alert.timestamp}
-                    </td>
+                      <td
+                        style={{
+                          padding: "10px",
+                          color: "white",
+                          textAlign: "center",
+                          fontSize: "0.85rem",
+                        }}
+                      >
+                        {alert.timestamp}
+                      </td>
+                      <td
+                        style={{
+                          padding: "10px",
+                          color: "white",
+                          textAlign: "center",
+                          fontSize: "0.85rem",
+                        }}
+                      >
+                        {alert.email}
+                      </td>
+                      <td
+                        style={{
+                          padding: "10px",
+                          color: "white",
+                          textAlign: "center",
+                          fontSize: "0.85rem",
+                        }}
+                      >
+                        {alert.alertMessage}
+                      </td>
+                      <td
+                        style={{
+                          padding: "10px",
+                          fontWeight: "bold",
+                          textAlign: "center",
+                          fontSize: "0.85rem",
+                          color:
+                            alert.riskLevel === "Alto"
+                              ? "red"
+                              : alert.riskLevel === "Médio"
+                              ? "orange"
+                              : "green",
+                        }}
+                      >
+                        {alert.riskLevel}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
                     <td
+                      colSpan="4"
                       style={{
-                        padding: "10px",
-                        color: "white",
                         textAlign: "center",
+                        padding: "10px",
+                        color: "gray",
                       }}
                     >
-                      {alert.email}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        color: "white",
-                        textAlign: "center",
-                      }}
-                    >
-                      {alert.alertMessage}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px",
-                        fontWeight: "bold",
-                        textAlign: "center",
-                        color:
-                          alert.riskLevel === "Alto"
-                            ? "red"
-                            : alert.riskLevel === "Médio"
-                            ? "orange"
-                            : "green",
-                      }}
-                    >
-                      {alert.riskLevel}
+                      Nenhum alerta encontrado
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="4"
-                    style={{
-                      textAlign: "center",
-                      padding: "10px",
-                      color: "gray",
-                    }}
-                  >
-                    Nenhum alerta encontrado
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
       {/* Botão "Voltar ao Login" visível para TODOS os usuários */}

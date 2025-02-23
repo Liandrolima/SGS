@@ -29,11 +29,11 @@ module.exports = [
   },
   {
     "name": "Batcomputador",
-    "status": "Em manutenção",
+    "status": "Disponível",
     "serialNumber": "SN-111680",
     "timestamp": "30 dias",
     "id": 22,
-    "maintenanceDate": "2025-02-16T16:42:03.286Z"
+    "maintenanceDate": "2025-02-23T00:07:06.428Z"
   },
   {
     "name": "Ventilador",
@@ -93,8 +93,8 @@ module.exports = [
   },
   {
     "name": "Máquina003",
-    "status": "Fora de uso",
-    "maintenanceDate": "2025-02-19T02:08:23.067Z",
+    "status": "Disponível",
+    "maintenanceDate": "2025-02-23T00:07:43.507Z",
     "serialNumber": "SN-300806",
     "id": 31
   },
@@ -108,8 +108,8 @@ module.exports = [
   },
   {
     "name": "Máquina005",
-    "status": "Fora de uso",
-    "maintenanceDate": "2025-02-22T17:53:12.672Z",
+    "status": "Disponível",
+    "maintenanceDate": "2025-02-23T00:06:11.948Z",
     "serialNumber": "SN-125793",
     "id": 33
   },
@@ -123,8 +123,8 @@ module.exports = [
   },
   {
     "name": "Máquina012",
-    "status": "Em manutenção",
-    "maintenanceDate": "2025-02-22T17:55:43.706Z",
+    "status": "Disponível",
+    "maintenanceDate": "2025-02-23T00:05:37.155Z",
     "availabilityDate": "2025-02-19T19:00:52.394Z",
     "serialNumber": "SN-454094",
     "id": 35
@@ -135,5 +135,20 @@ module.exports = [
     "maintenanceDate": "2025-02-22T18:13:55.045Z",
     "serialNumber": "SN-995200",
     "id": 36
+  },
+  {
+    "name": "Máquina14",
+    "status": "Disponível",
+    "maintenanceDate": "2025-02-23T00:20:06.465Z",
+    "availabilityDate": "2025-02-23T00:20:08.385Z",
+    "serialNumber": "SN-540481",
+    "id": 37
+  },
+  {
+    "name": "Máquina15",
+    "status": "Em manutenção",
+    "maintenanceDate": "2025-02-23T00:32:46.870Z",
+    "serialNumber": "SN-999089",
+    "id": 38
   }
 ];

@@ -17,7 +17,7 @@
   {
     "email": "ka@ka",
     "password": "123",
-    "role": "admin"   
+    "role": "admin"
   },
   {
     "email": "pedro@pr",
@@ -32,6 +32,11 @@
   {
     "email": "paulo@paulo",
     "password": "567",
+    "role": "Funcionario"
+  },
+  {
+    "email": "silva@sil",
+    "password": "579",
     "role": "Funcionario"
   }
 ]
