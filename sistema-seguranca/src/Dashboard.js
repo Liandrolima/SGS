@@ -853,7 +853,7 @@ const Dashboard = () => {
             <Grid
               item
               xs={12}
-              md={6}
+              md={9}
               sx={{ display: "flex", justifyContent: "center" }}
             >
               <Paper
@@ -864,7 +864,7 @@ const Dashboard = () => {
                   flexDirection: "column",
                   alignItems: "center",
                   padding: 2,
-                  width: { xs: "100%", sm: "500px" }, // 100% em celulares, 500px em telas maiores
+                  width: { xs: "100%", sm: "80%", md: "70%" }, // 100% em celulares, 500px em telas maiores
                   backgroundColor: "#1C1C1C",
                   color: "#FFFFFF",
                   boxShadow: "0px 4px 10px rgba(255, 215, 0, 0.5)",
@@ -887,11 +887,11 @@ const Dashboard = () => {
                 </Typography>
                 <TableContainer
                   component="div"
-                  sx={{ width: "100%", overflow: "hidden" }}
+                  sx={{ minWidth: "100px", overflowX: "auto" }}
                 ></TableContainer>
                 <TableContainer
                   component="div"
-                  sx={{ width: "100%", overflowX: "auto" }}
+                  sx={{ minWidth: "100px", overflowX: "auto" }}
                 >
                   <Table size="small">
                     <TableHead>
