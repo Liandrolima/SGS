@@ -20,23 +20,13 @@
     "role": "admin"
   },
   {
-    "email": "pedro@pr",
+    "email": "pp@pp",
     "password": "123",
-    "role": "admin"
+    "role": "gerente"
   },
   {
-    "email": "jo@jo",
+    "email": "li@li",
     "password": "246",
-    "role": "Funcionario"
-  },
-  {
-    "email": "paulo@paulo",
-    "password": "567",
-    "role": "Funcionario"
-  },
-  {
-    "email": "silva@sil",
-    "password": "579",
-    "role": "Funcionario"
+    "role": "gerente"
   }
 ]

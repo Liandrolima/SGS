@@ -37,6 +37,7 @@ import { Box } from "@mui/material";
 import imagemLogin from "./imagens/batmancarro.png"; // Importe corretamente a imagem
 
 import CadastroUsuario from "./CadastroUsuario";
+import RemoverUsuario from "./RemoverUsuario";
 
 const Dashboard = () => {
   const [resources, setResources] = useState([]);
@@ -55,6 +56,27 @@ const Dashboard = () => {
     severity: "success",
   });
   const navigate = useNavigate();
+  const [usuarios, setUsuarios] = useState([]);
+
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const data = await api.getUsuarios();
+        setUsuarios(data);
+      } catch (error) {
+        console.error("Erro ao buscar usuários:", error);
+      }
+    };
+    fetchUsuarios();
+  }, []);
+  usuarios.map((usuario) => (
+    <tr key={usuario.email}>
+      <td>{usuario.nome || "Nome não disponível"}</td>
+      <td>{usuario.email}</td>
+      <td>{usuario.role}</td>
+      <td>{usuario.dataCriacao || "Data não disponível"}</td>
+    </tr>
+  ));
 
   useEffect(() => {
     const deniedCount = parseInt(localStorage.getItem("deniedCount"), 10) || 0;
@@ -530,7 +552,7 @@ const Dashboard = () => {
                 InputLabelProps={{ style: { color: "#000" } }}
               />
               <Typography variant="body2" sx={{ color: "#000", marginLeft: 1 }}>
-              {maintenanceStatus.text}
+                {maintenanceStatus.text}
               </Typography>
             </Box>
           )}
@@ -726,6 +748,58 @@ const Dashboard = () => {
       )}
 
       {userRole === "admin" && <CadastroUsuario />}
+      {userRole === "admin" && <RemoverUsuario />}
+
+      {userRole === "admin" && (
+        <Paper
+          sx={{
+            padding: 3,
+            marginTop: 4,
+            backgroundColor: "#1c1c1c",
+            color: "#f5f5f5",
+            borderRadius: 2,
+            boxShadow: "0px 0px 10px #ffcc00",
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+            Lista de Usuários
+          </Typography>
+          <TableContainer component={Paper} sx={{ backgroundColor: "#333" }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ color: "#fdd835", fontWeight: "bold" }}>
+                    Nome
+                  </TableCell>
+                  <TableCell sx={{ color: "#fdd835", fontWeight: "bold" }}>
+                    E-mail
+                  </TableCell>
+                  <TableCell sx={{ color: "#fdd835", fontWeight: "bold" }}>
+                    Função
+                  </TableCell>
+                  <TableCell sx={{ color: "#fdd835", fontWeight: "bold" }}>
+                    Data de Criação
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {usuarios.map((usuario) => (
+                  <TableRow key={usuario.email}>
+                    <TableCell sx={{ color: "#fff" }}>{usuario.nome}</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>
+                      {usuario.email}
+                    </TableCell>
+                    <TableCell sx={{ color: "#fff" }}>{usuario.role}</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>
+                      {new Date(usuario.createdAt).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      )}
 
       {userRole === "admin" && (
         <Grid container spacing={2} sx={{ marginTop: 2 }}>

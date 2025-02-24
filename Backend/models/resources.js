@@ -147,8 +147,15 @@ module.exports = [
   {
     "name": "Máquina15",
     "status": "Em manutenção",
-    "maintenanceDate": "2025-02-23T00:32:46.870Z",
+    "maintenanceDate": "2025-02-24T00:14:49.208Z",
     "serialNumber": "SN-999089",
     "id": 38
+  },
+  {
+    "name": "Máquina016",
+    "status": "Em manutenção",
+    "maintenanceDate": "2025-02-24T00:13:50.688Z",
+    "serialNumber": "SN-277259",
+    "id": 39
   }
 ];

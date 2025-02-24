@@ -104,7 +104,7 @@ const CadastroUsuario = () => {
           }}
       >
           <option value="admin">Administrador(a)</option>
-          <option value="Gerente">Gerente</option>
+          <option value="gerente">Gerente</option>
           <option value="Funcionario">Funcionário(a)</option>
       </TextField>
       <Button 

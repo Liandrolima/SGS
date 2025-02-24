@@ -1,3 +1,4 @@
+import axios from "axios";
 console.log("🔥 api.js foi carregado!");
 
 export const api = {
@@ -146,6 +147,11 @@ export const api = {
         }
     },
 
+    getUsuarios: async () => {
+        const response = await fetch("http://localhost:5000/api/users");
+        return response.json();
+      },
+
     // 🟢 Cadastrar novo usuário
     cadastrarUsuario: async ({ email, password, role }) => {
         const usuarioFormatado = { email, password, role };
@@ -174,6 +180,21 @@ export const api = {
             return null;
         }
     },
+
+    // 🟢 Remover usuário
+    RemoverUsuario: async (email) => {
+        console.log("📤 Tentando remover usuário com e-mail:", email);
+        
+    
+        try {
+            const response = await axios.delete(`/api/users/${email}`);
+            return response.data;  // Garantir que a resposta seja retornada corretamente
+          } catch (error) {
+            console.error("Erro ao remover usuário:", error);
+            throw error;  // Pode lançar o erro para tratá-lo no frontend
+          }
+    },
+    
 
     // 🟢 Obter atividades recentes
     getActivities: async () => {

@@ -4,7 +4,7 @@ const path = require("path");
 
 const router = express.Router();
 const USERS_FILE = path.join(__dirname, "../models/users.json");
-
+const usersFilePath = path.join(__dirname, "../models/users.json")
 // 🔥 Função para ler os usuários do arquivo JSON
 const lerUsuarios = () => {
     if (!fs.existsSync(USERS_FILE)) return []; // Se o arquivo não existir, retorna um array vazio
@@ -79,16 +79,33 @@ router.put("/:email", (req, res) => {
 
 // Rota para excluir um usuário
 router.delete("/:email", (req, res) => {
-    let users = lerUsuarios();
-    const filteredUsers = users.filter(u => u.email !== req.params.email);
+    const { email } = req.params;
 
-    if (users.length === filteredUsers.length) {
-        return res.status(404).json({ message: "Usuário não encontrado!" });
-    }
+    fs.readFile(usersFilePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error("Erro ao ler o arquivo users.json:", err);
+            return res.status(500).json({ message: "Erro ao ler os dados." });
+        }
 
-    salvarUsuarios(filteredUsers);
-    console.log("❌ Usuário removido:", req.params.email);
-    res.status(200).json({ message: "Usuário removido com sucesso!" });
+        const users = JSON.parse(data);
+        const userIndex = users.findIndex(user => user.email === email);
+
+        if (userIndex === -1) {
+            return res.status(404).json({ message: "Usuário não encontrado." });
+        }
+
+        users.splice(userIndex, 1); // Remove o usuário encontrado
+
+        fs.writeFile(usersFilePath, JSON.stringify(users, null, 2), 'utf8', (err) => {
+            if (err) {
+                console.error("Erro ao escrever no arquivo users.json:", err);
+                return res.status(500).json({ message: "Erro ao salvar as alterações." });
+            }
+            
+            console.log("Usuário removido com sucesso!");
+            res.status(200).json({ message: "Usuário removido com sucesso!" });
+        });
+    });
 });
 
 module.exports = router;

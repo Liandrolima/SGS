@@ -8,6 +8,7 @@ const resourceRoutes = require("./routes/resources");
 const errorHandler = require("./middlewares/errorHandler");
 
 
+
 dotenv.config();
 console.log("JWT_SECRET:", process.env.JWT_SECRET); // Teste se o .env está carregando
 
@@ -24,6 +25,11 @@ let pendingMaintenances = {};
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+
+// Importação das rotas
+const usersRouter = require('./routes/users');
+app.use('/api/users', usersRouter);
+
 
 // Rotas
 app.use("/api/auth", authRoutes);
