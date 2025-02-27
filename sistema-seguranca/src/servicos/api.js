@@ -1,6 +1,8 @@
 import axios from "axios";
 console.log("🔥 api.js foi carregado!");
 
+
+
 export const api = {
     // 🟢 Login do usuário
     login: async (email, password) => {
@@ -181,19 +183,48 @@ export const api = {
         }
     },
 
-    // 🟢 Remover usuário
-    RemoverUsuario: async (email) => {
-        console.log("📤 Tentando remover usuário com e-mail:", email);
-        
-    
+    listarUsuarios: async () => {
         try {
-            const response = await axios.delete(`/api/users/${email}`);
-            return response.data;  // Garantir que a resposta seja retornada corretamente
-          } catch (error) {
-            console.error("Erro ao remover usuário:", error);
-            throw error;  // Pode lançar o erro para tratá-lo no frontend
-          }
+            const response = await fetch("http://localhost:5000/api/users");
+            if (!response.ok) {
+                throw new Error("Erro ao listar usuários");
+            }
+            return response.json();
+        } catch (error) {
+            console.error("Erro ao listar usuários:", error);
+            throw error;
+        }
     },
+    
+    editarUsuario: async (email, usuarioAtualizado) => {
+        try {
+          const response = await axios.put(`http://localhost:5000/api/users/${email}`, usuarioAtualizado);
+          return response.data;
+        } catch (error) {
+          console.error("Erro ao editar usuário:", error);
+          throw new Error("Erro ao editar usuário");
+        }
+      },
+      
+    
+    removerUsuario: async (email) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/users/${email}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error("Erro ao remover usuário");
+            }
+            console.log("Usuário removido com sucesso!");
+        } catch (error) {
+            console.error("Erro ao remover usuário:", error);
+            throw error;
+        }
+    },
+    
     
 
     // 🟢 Obter atividades recentes

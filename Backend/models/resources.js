@@ -157,5 +157,12 @@ module.exports = [
     "maintenanceDate": "2025-02-24T00:13:50.688Z",
     "serialNumber": "SN-277259",
     "id": 39
+  },
+  {
+    "name": "Máquina017",
+    "status": "Disponível",
+    "maintenanceDate": "2025-02-27T20:27:45.738Z",
+    "serialNumber": "SN-255656",
+    "id": 40
   }
 ];
