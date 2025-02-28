@@ -169,14 +169,14 @@ const ListarUsuario = ({ userRole }) => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            backgroundColor: "#fff",
+            backgroundColor: "#121212",
             padding: 4,
             borderRadius: 2,
             boxShadow: 3,
             width: 400,
           }}
         >
-          <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+          <Typography variant="h5" sx={{ color: "#F8D210", fontWeight: "bold", marginBottom: 2 }}>
             Editar Usuário
           </Typography>
 
@@ -259,10 +259,11 @@ const ListarUsuario = ({ userRole }) => {
           <Button
             variant="contained"
             color="primary"
+            sx={{ backgroundColor: "#F8D210", color: "#000", marginTop: 2 }}
             onClick={handleSalvarAlteracoes}
             fullWidth
           >
-            Salvar
+            Salvar Alterações
           </Button>
         </Box>
       </Modal>
