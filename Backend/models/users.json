@@ -28,5 +28,15 @@
     "email": "jo@jo",
     "password": "123",
     "role": "Funcionario"
+  },
+  {
+    "email": "jj@xg",
+    "password": "789",
+    "role": "Funcionario"
+  },
+  {
+    "email": "ff@fx",
+    "password": "345",
+    "role": "Funcionario"
   }
 ]
