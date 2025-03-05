@@ -35,16 +35,15 @@ import {
 import { Box } from "@mui/material";
 
 import imagemLogin from "./imagens/batmancarro.png"; // Importe corretamente a imagem
-
 import CadastroUsuario from "./CadastroUsuario";
 import ListarUsuario from "./ListarUsuario";
+import NovoRecurso from "./NovoRecurso";
 
 const Dashboard = () => {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState(null);
   const [editingResource, setEditingResource] = useState(null);
-  const [newResource, setNewResource] = useState({ name: "", status: "" });
   const [accessStats, setAccessStats] = useState({
     approved: 0,
     denied: 0, // Inicialmente 0 negados
@@ -56,7 +55,7 @@ const Dashboard = () => {
     severity: "success",
   });
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const deniedCount = parseInt(localStorage.getItem("deniedCount"), 10) || 0;
     const approvedCount = 10 - deniedCount; // Ajuste conforme necessário
@@ -143,31 +142,6 @@ const Dashboard = () => {
     })();
   }, [navigate]);
 
-  const generateSerialNumber = () =>
-    "SN-" + Math.floor(Math.random() * 1000000);
-  const handleSaveNewResource = async () => {
-    if (!newResource.name || !newResource.status) {
-      console.error("Erro: Preencha todos os campos!");
-      return;
-    }
-    const resourceToAdd = {
-      ...newResource,
-      serialNumber: newResource.serialNumber || generateSerialNumber(),
-    };
-    console.log("📤 Enviando novo recurso:", JSON.stringify(resourceToAdd));
-    try {
-      const response = await api.addResource(resourceToAdd);
-      if (!response || !response.resource)
-        throw new Error("Erro ao adicionar recurso.");
-      setResources((prevResources) => [...prevResources, response.resource]);
-      setNewResource({ name: "", status: "", serialNumber: "" });
-      // 🔥 Recarrega os recursos para garantir que a lista seja atualizada
-      const updatedResources = await api.getResources();
-      setResources(updatedResources);
-    } catch (error) {
-      console.error("Erro ao adicionar recurso:", error);
-    }
-  };
   const handleDeleteResource = async (id) => {
     if (!id) return console.error("Erro: ID inválido!");
     try {
@@ -566,169 +540,12 @@ const Dashboard = () => {
         </Paper>
       )}
 
-      {(userRole === "admin" || userRole === "gerente") && (
-        <Paper
-          sx={{
-            padding: 3,
-            margin: "20px",
-            backgroundColor: "#1c1c1c",
-            color: "#f5f5f5",
-            borderRadius: 2,
-            boxShadow: "0px 0px 10px #ffcc00",
-          }}
-        >
-          <Typography variant="h5" sx={{ color: "#ffcc00" }}>
-            Adicionar Novo Recurso
-          </Typography>
-
-          {/* Nome do recurso */}
-          <TextField
-            fullWidth
-            label="Nome"
-            value={newResource.name}
-            onChange={(e) =>
-              setNewResource({ ...newResource, name: e.target.value })
-            }
-            sx={{
-              backgroundColor: "#333",
-              borderRadius: 1,
-              input: { color: "#f5f5f5" },
-            }}
-            InputLabelProps={{ style: { color: "#F8D210" } }}
-          />
-
-          {/* Status do recurso */}
-          <TextField
-            fullWidth
-            label="Status"
-            select
-            value={newResource.status}
-            onChange={(e) => {
-              const newStatus = e.target.value;
-              let newResourceCopy = { ...newResource, status: newStatus };
-
-              if (newStatus === "Em manutenção") {
-                if (!newResourceCopy.maintenanceDate) {
-                  newResourceCopy.maintenanceDate = new Date().toISOString();
-                }
-              } else {
-                if (!newResourceCopy.availabilityDate) {
-                  newResourceCopy.availabilityDate = new Date().toISOString();
-                }
-              }
-
-              setNewResource(newResourceCopy);
-            }}
-            SelectProps={{
-              native: true,
-            }}
-            sx={{
-              backgroundColor: "#333",
-              color: "#FFF",
-              borderRadius: "4px",
-              marginTop: 2,
-            }}
-            InputLabelProps={{ style: { color: "#F8D210" } }}
-          >
-            <option value="Disponível">Disponível</option>
-            <option value="Em manutenção">Em manutenção</option>
-            <option value="Fora de uso">Fora de uso</option>
-          </TextField>
-
-          {/* Data em que o novo recurso ficou disponível */}
-          {newResource.status === "Disponível" && (
-            <TextField
-              fullWidth
-              label="Data de Disponibilidade"
-              value={
-                newResource.availabilityDate
-                  ? new Date(newResource.availabilityDate).toLocaleString(
-                      "pt-BR"
-                    )
-                  : ""
-              }
-              InputProps={{ readOnly: true }}
-              sx={{
-                marginTop: 2,
-                backgroundColor: "green",
-                color: "#f5f5f5",
-              }}
-            />
-          )}
-
-          {/* Data de início da manutenção */}
-          {newResource.status === "Em manutenção" && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                backgroundColor: "yellow",
-                padding: 2,
-                borderRadius: 1,
-              }}
-            >
-              <TextField
-                label="Data de Início da Manutenção"
-                value={
-                  newResource.maintenanceDate
-                    ? new Date(newResource.maintenanceDate).toLocaleString(
-                        "pt-BR"
-                      )
-                    : ""
-                }
-                InputProps={{ readOnly: true }}
-                sx={{
-                  backgroundColor: "transparent",
-                  color: "black",
-                  flexGrow: 1,
-                }}
-              />
-              <Typography
-                variant="body2"
-                sx={{ color: "black", marginLeft: 1 }}
-              >
-                Após adicionar, a manutenção vencerá em sete dias
-              </Typography>
-            </Box>
-          )}
-
-          {/* Data em que o novo recurso ficou Fora de uso */}
-          {newResource.status === "Fora de uso" && (
-            <TextField
-              fullWidth
-              label="Data Fora de Uso"
-              value={
-                newResource.availabilityDate
-                  ? new Date(newResource.availabilityDate).toLocaleString(
-                      "pt-BR"
-                    )
-                  : ""
-              }
-              InputProps={{ readOnly: true }}
-              sx={{ marginTop: 2, backgroundColor: "red", color: "#f5f5f5" }}
-            />
-          )}
-
-          {/* Botão para adicionar o novo recurso */}
-          <Button
-            variant="contained"
-            color="success"
-            onClick={handleSaveNewResource}
-            sx={{
-              marginTop: 2,
-              backgroundColor: "#ffcc00",
-              color: "#000",
-              "&:hover": { backgroundColor: "#e6b800" },
-            }}
-          >
-            Adicionar
-          </Button>
-        </Paper>
-      )}
+      {(userRole === "admin" || userRole === "gerente") && <NovoRecurso />}
 
       {userRole === "admin" && <CadastroUsuario />}
+
       {userRole === "admin" && <ListarUsuario />}
-      
+
       {userRole === "admin" && (
         <Grid container spacing={2} sx={{ marginTop: 2 }}>
           <Grid item xs={12}>
