@@ -39,6 +39,7 @@ import NovoRecurso from "./NovoRecurso";
 import AlertaSeguranca from "./AlertaSeguranca";
 import StatusRecursos from "./StatusRecursos";
 import RecursosporStatus from "./RecursosporStatus";
+import RecursosmaisUtilizados from "./RecursosmaisUtilizados";
 
 const Dashboard = () => {
   const [resources, setResources] = useState([]);
@@ -128,7 +129,7 @@ const Dashboard = () => {
     localStorage.removeItem("token"); // Remova o token do localStorage
     navigate("/"); // Redireciona para a página de login
   };
-    
+
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   const getMaintenanceDateStatus = (maintenanceDate) => {
@@ -529,95 +530,11 @@ const Dashboard = () => {
 
       {(userRole === "admin" || userRole === "gerente") && <StatusRecursos />}
 
-      {(userRole === "admin" || userRole === "gerente") && <RecursosporStatus />}
+      {<RecursosporStatus />}
 
-      
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        sx={{
-          padding: -4,
-          margin: "20px",
-          marginLeft: "-1px",
-          textAlign: "center",
-          backgroundColor: "#121212",
-          color: "#FFD700",
-          boxShadow: "0px 4px 10px rgba(255, 215, 0, 0.5)",
-          borderRadius: "10px",
-        }}
-      >
-        <Typography
-          variant="h5"
-          sx={{ marginTop: 4, color: "#FFD700", fontWeight: "bold" }}
-        >
-          Recursos Mais Utilizados
-        </Typography>
-        <TableContainer
-          component={Paper}
-          sx={{ backgroundColor: "#1C1C1C", color: "#FFFFFF", padding: 2 }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ color: "#FFD700", fontWeight: "bold" }}>
-                  Recurso
-                </TableCell>
-                <TableCell sx={{ color: "#FFD700", fontWeight: "bold" }}>
-                  Disponibilidade
-                </TableCell>
-                <TableCell sx={{ color: "#FFD700", fontWeight: "bold" }}>
-                  Tempo de Disponibilidade
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {resources
-                .filter((item) => item.status === "Disponível")
-                .map((item, index) => {
-                  const disponibilidade = item.maintenanceDate
-                    ? new Date(item.maintenanceDate).toLocaleString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                      })
-                    : "N/A";
-
-                  const agora = new Date();
-                  const manutencaoData = item.maintenanceDate
-                    ? new Date(item.maintenanceDate)
-                    : null;
-                  let tempoDisponibilidade = "N/A";
-
-                  if (manutencaoData) {
-                    const diff = Math.floor((agora - manutencaoData) / 1000);
-                    const dias = Math.floor(diff / 86400);
-                    const horas = Math.floor((diff % 86400) / 3600);
-                    const minutos = Math.floor((diff % 3600) / 60);
-                    const segundos = diff % 60;
-
-                    tempoDisponibilidade = `${dias}d ${horas}h ${minutos}m ${segundos}s`;
-                  }
-
-                  return (
-                    <TableRow key={index} sx={{ backgroundColor: "#2B2B2B" }}>
-                      <TableCell sx={{ color: "#FFF" }}>{item.name}</TableCell>
-                      <TableCell sx={{ color: "green" }}>
-                        {disponibilidade}
-                      </TableCell>
-                      <TableCell sx={{ color: "green" }}>
-                        {tempoDisponibilidade}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
+      {(userRole === "admin" || userRole === "gerente") && (
+        <RecursosmaisUtilizados />
+      )}
 
       {userRole === "admin" && <AlertaSeguranca />}
 
