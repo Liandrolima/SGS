@@ -14,25 +14,12 @@ import {
   CircularProgress,
   TextField,
   Grid,
-  Card,
-  CardContent,
   Snackbar,
   Alert,
 } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
-import {
-  ResponsiveContainer,
-  BarChart,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  Bar,
-} from "recharts";
 import { Box } from "@mui/material";
-
 import imagemLogin from "./imagens/batmancarro.png"; // Importe corretamente a imagem
-
 import CadastroUsuario from "./CadastroUsuario";
 import ListarUsuario from "./ListarUsuario";
 import NovoRecurso from "./NovoRecurso";
@@ -40,55 +27,19 @@ import AlertaSeguranca from "./AlertaSeguranca";
 import StatusRecursos from "./StatusRecursos";
 import RecursosporStatus from "./RecursosporStatus";
 import RecursosmaisUtilizados from "./RecursosmaisUtilizados";
+import AcessosRestritos from "./AcessosRestritos";
 
 const Dashboard = () => {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState(null);
   const [editingResource, setEditingResource] = useState(null);
-  const [accessStats, setAccessStats] = useState({
-    approved: 0,
-    denied: 0, // Inicialmente 0 negados
-  });
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const deniedCount = parseInt(localStorage.getItem("deniedCount"), 10) || 0;
-    const approvedCount = 10 - deniedCount; // Ajuste conforme necessário
-    setAccessStats({
-      approved: approvedCount,
-      denied: deniedCount,
-    });
-  }, []);
-
-  const resetAccessCounts = () => {
-    // Recuperar o perfil do usuário do localStorage
-    // Supondo que o perfil esteja armazenado assim
-
-    // Verifica se o usuário é um administrador
-    if (userRole === "admin") {
-      localStorage.removeItem("deniedCount"); // Remove contagem de acessos negados
-      localStorage.removeItem("approvedCount"); // Remove contagem de acessos aprovados
-
-      setAccessStats({
-        approved: 0, // Reseta os contadores para 0
-        denied: 0,
-      });
-
-      console.log("Contadores de acessos resetados");
-    } else {
-      // Caso o usuário não seja admin, exibe um aviso
-      console.log(
-        "Você não tem permissão para resetar os contadores de acessos."
-      );
-      alert("Apenas administradores podem resetar os contadores de acessos.");
-    }
-  };
 
   useEffect(() => {
     const role = localStorage.getItem("userRole");
@@ -474,60 +425,6 @@ const Dashboard = () => {
 
       {(userRole === "admin" || userRole === "gerente") && <NovoRecurso />}
 
-      {userRole === "admin" && <CadastroUsuario />}
-
-      {userRole === "admin" && <ListarUsuario />}
-
-      {userRole === "admin" && (
-        <Grid container spacing={2} sx={{ marginTop: 2 }}>
-          <Grid item xs={12}>
-            <Card
-              sx={{
-                backgroundColor: "#1c1c1c",
-                color: "white",
-                borderRadius: "12px",
-                boxShadow: "0px 0px 10px rgba(255, 215, 0, 0.3)",
-              }}
-            >
-              <CardContent>
-                <button
-                  onClick={resetAccessCounts}
-                  style={{
-                    background: "#FFD700",
-                    color: "#1c1c1c",
-                    border: "none",
-                    padding: "10px 15px",
-                    borderRadius: "6px",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                    transition: "0.3s",
-                    marginBottom: "15px",
-                  }}
-                >
-                  Resetar Contagem de Acessos
-                </button>
-                <Typography
-                  variant="h6"
-                  sx={{ color: "#FFD700", marginBottom: "15px" }}
-                >
-                  Acessos Restritos
-                </Typography>
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={[{ name: "Acessos", ...accessStats }]}>
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="approved" fill="#4CAF50" name="Aprovados" />
-                    <Bar dataKey="denied" fill="#F44336" name="Negados" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      )}
-
       {(userRole === "admin" || userRole === "gerente") && <StatusRecursos />}
 
       {<RecursosporStatus />}
@@ -535,6 +432,12 @@ const Dashboard = () => {
       {(userRole === "admin" || userRole === "gerente") && (
         <RecursosmaisUtilizados />
       )}
+
+      {userRole === "admin" && <CadastroUsuario />}
+
+      {userRole === "admin" && <ListarUsuario />}
+
+      {userRole === "admin" && <AcessosRestritos />}
 
       {userRole === "admin" && <AlertaSeguranca />}
 
