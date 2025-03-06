@@ -38,6 +38,7 @@ import ListarUsuario from "./ListarUsuario";
 import NovoRecurso from "./NovoRecurso";
 import AlertaSeguranca from "./AlertaSeguranca";
 import StatusRecursos from "./StatusRecursos";
+import RecursosporStatus from "./RecursosporStatus";
 
 const Dashboard = () => {
   const [resources, setResources] = useState([]);
@@ -127,19 +128,7 @@ const Dashboard = () => {
     localStorage.removeItem("token"); // Remova o token do localStorage
     navigate("/"); // Redireciona para a página de login
   };
-  // Agrupa recursos por status
-  const statusCounts = resources.reduce((acc, resource) => {
-    if (!acc[resource.status]) acc[resource.status] = [];
-    acc[resource.status].push(resource.name);
-    return acc;
-  }, {});
-  // Prepara os dados para o gráfico (status e os nomes dos recursos)
-  const pieData = Object.entries(statusCounts).map(([status, names]) => ({
-    status,
-    count: names.length,
-    resources: names.join(", "), // Lista de recursos com esse status
-  }));
-
+    
   const handleCloseSnackbar = () => setSnackbar({ ...snackbar, open: false });
 
   const getMaintenanceDateStatus = (maintenanceDate) => {
@@ -181,35 +170,6 @@ const Dashboard = () => {
       console.error("Erro ao salvar edição:", error);
     }
   };
-
-  const preprocessData = (pieData, resources) => {
-    return pieData.map((item) => {
-      const processedResources = item.resources
-        .split(",")
-        .map((resourceName) => {
-          const trimmedResourceName = resourceName.trim(); // Remover espaços extras
-          const resource = resources.find(
-            (r) => r.name === trimmedResourceName
-          );
-          return {
-            name: trimmedResourceName,
-            status: item.status,
-            maintenanceDate:
-              resource && resource.maintenanceDate
-                ? new Date(resource.maintenanceDate).toLocaleString()
-                : "N/A",
-          };
-        });
-
-      return {
-        ...item,
-        processedResources,
-      };
-    });
-  };
-
-  // Chamando o pré-processamento e gerando o processedData
-  const processedData = preprocessData(pieData, resources);
 
   return (
     <Paper
@@ -569,102 +529,9 @@ const Dashboard = () => {
 
       {(userRole === "admin" || userRole === "gerente") && <StatusRecursos />}
 
-      {(userRole === "admin" || userRole === "gerente") && (
-        <Paper>
-          {/* Lista de Recursos */}
-          <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
-            sx={{
-              padding: -4,
-              margin: "20px",
-              marginLeft: "1px",
-              textAlign: "center",
-              backgroundColor: "#121212",
-              color: "#FFD700",
-              boxShadow: "0px 4px 10px rgba(255, 215, 0, 0.5)",
-              borderRadius: "10px",
-            }}
-          >
-            <Grid
-              item
-              xs={12}
-              sx={{ display: "flex", justifyContent: "center", width: "100%" }}
-            >
-              <Typography
-                variant="h6"
-                align="center"
-                sx={{ marginTop: 4, color: "#FFD700", fontWeight: "bold" }}
-              >
-                Recursos por Status
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{ display: "flex", justifyContent: "center", width: "80%" }}
-            >
-              <Paper
-                sx={{
-                  padding: 2,
-                  width: "100%",
-                  overflow: "auto",
-                  backgroundColor: "#1C1C1C",
-                  color: "#FFFFFF",
-                }}
-              >
-                <Table
-                  sx={{
-                    backgroundColor: "#1C1C1C",
-                    color: "#FFFFFF",
-                    padding: 2,
-                  }}
-                >
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ color: "#FFD700", fontWeight: "bold" }}>
-                        Nome do Recurso
-                      </TableCell>
-                      <TableCell sx={{ color: "#FFD700", fontWeight: "bold" }}>
-                        Status
-                      </TableCell>
-                      <TableCell sx={{ color: "#FFD700", fontWeight: "bold" }}>
-                        Última Atualização
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {processedData.map((item, index) => {
-                      let textColor = "#FFFFFF";
-                      if (item.status === "Em manutenção") {
-                        textColor = "#FFD700";
-                      } else if (item.status === "Disponível") {
-                        textColor = "#32CD32";
-                      } else if (item.status === "Fora de uso") {
-                        textColor = "#FF4500";
-                      }
-                      return item.processedResources.map((resource, i) => (
-                        <TableRow key={i} sx={{ backgroundColor: "#2B2B2B" }}>
-                          <TableCell sx={{ color: "#FFF" }}>
-                            {resource.name}
-                          </TableCell>
-                          <TableCell sx={{ color: textColor }}>
-                            {item.status}
-                          </TableCell>
-                          <TableCell sx={{ color: "#FFF" }}>
-                            {resource.maintenanceDate}
-                          </TableCell>
-                        </TableRow>
-                      ));
-                    })}
-                  </TableBody>
-                </Table>
-              </Paper>
-            </Grid>
-          </Grid>
-        </Paper>
-      )}
+      {(userRole === "admin" || userRole === "gerente") && <RecursosporStatus />}
+
+      
       <Grid
         container
         justifyContent="center"
