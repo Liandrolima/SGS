@@ -17,12 +17,12 @@
   {
     "email": "ka@ka",
     "password": "123",
-    "role": "admin"
+    "role": "gerente"
   },
   {
     "email": "li@li",
     "password": "246",
-    "role": "gerente"
+    "role": "admin"
   },
   {
     "email": "jo@jo",
