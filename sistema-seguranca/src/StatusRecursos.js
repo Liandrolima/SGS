@@ -75,9 +75,17 @@ const StatusRecursos = () => {
   }, {});
   // Prepara os dados para o gráfico (status e os nomes dos recursos)
   const pieData = Object.entries(statusCounts).map(([status, names]) => ({
-    status,
-    count: names.length,
+    status, // Mantém o nome do status dinâmico
+    count: names.length, // Quantidade de recursos nesse status
     resources: names.join(", "), // Lista de recursos com esse status
+    color:
+      status === "Em manutenção"
+        ? "#FFD700"
+        : status === "Disponível"
+        ? "#32CD32"
+        : status === "Fora de uso"
+        ? "#FF4500"
+        : "#CCCCCC", // Define a cor dinamicamente
   }));
 
   const getMaintenanceDateStatus = (maintenanceDate) => {
@@ -126,7 +134,7 @@ const StatusRecursos = () => {
           backgroundColor: "#1c1c1c",
           color: "#f5f5f5",
           borderRadius: 2,
-          boxShadow: "0px 0px 10px #ffcc00",
+          boxShadow: "0px 0px 15px #ffcc00",
         }}
       >
         <Typography
@@ -134,43 +142,69 @@ const StatusRecursos = () => {
           align="center"
           sx={{
             color: "#FFD700",
-            fontSize: "2.0rem",
-            fontFamily: '"Bangers", sans-serif', // Fonte inspirada no Batman
+            fontSize: "2.5rem",
+            fontFamily: "Bangers, sans-serif",
+            textShadow: "3px 3px 6px rgba(255, 215, 0, 0.9)",
           }}
         >
           Status dos Recursos
         </Typography>
-        {/* Grid item para o gráfico */}
+
         <Grid
           item
           xs={12}
           md={9}
           sx={{ display: "flex", justifyContent: "center" }}
         >
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={350}>
             <PieChart>
+              <defs>
+                <linearGradient id="goldGradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#FFD700" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#B8860B" stopOpacity={1} />
+                </linearGradient>
+                <linearGradient id="greenGradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#32CD32" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#006400" stopOpacity={1} />
+                </linearGradient>
+                <linearGradient id="redGradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#FF4500" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#8B0000" stopOpacity={1} />
+                </linearGradient>
+              </defs>
               <Pie
                 data={pieData}
                 dataKey="count"
                 nameKey="status"
                 cx="50%"
                 cy="50%"
-                outerRadius={100}
+                innerRadius={70}
+                outerRadius={130}
+                paddingAngle={5}
+                cornerRadius={15}
+                stroke="#222"
+                strokeWidth={3}
+                startAngle={180}
+                endAngle={-180}
               >
-                {pieData.map((item, index) => {
-                  let fillColor = "#ccc";
-                  if (item.status === "Em manutenção") {
-                    fillColor = "yellow";
-                  } else if (item.status === "Disponível") {
-                    fillColor = "green";
-                  } else if (item.status === "Fora de uso") {
-                    fillColor = "red";
-                  }
-                  return <Cell key={index} fill={fillColor} />;
-                })}
+                {pieData.map((item, index) => (
+                  <Cell
+                    key={index}
+                    fill={item.color}
+                    style={{
+                      filter: "drop-shadow(3px 3px 7px rgba(0,0,0,0.8))",
+                    }}
+                  />
+                ))}
               </Pie>
-              <Tooltip />
-              <Legend />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#222",
+                  color: "#fff",
+                  borderRadius: "5px",
+                }}
+              />
+              <Legend iconType="circle" wrapperStyle={{ color: "#fff" }} />
             </PieChart>
           </ResponsiveContainer>
         </Grid>
