@@ -1,0 +1,42 @@
+[
+  {
+    "email": "admin@wayne.com",
+    "password": "batman123",
+    "role": "admin"
+  },
+  {
+    "email": "manager@wayne.com",
+    "password": "robin456",
+    "role": "admin"
+  },
+  {
+    "email": "staff@wayne.com",
+    "password": "alfred789",
+    "role": "gerente"
+  },
+  {
+    "email": "ka@ka",
+    "password": "123",
+    "role": "gerente"
+  },
+  {
+    "email": "li@li",
+    "password": "246",
+    "role": "admin"
+  },
+  {
+    "email": "jo@jo",
+    "password": "123",
+    "role": "Funcionario"
+  },
+  {
+    "email": "jj@xg",
+    "password": "789",
+    "role": "Funcionario"
+  },
+  {
+    "email": "ff@fx",
+    "password": "345",
+    "role": "Funcionario"
+  }
+]
