@@ -1,7 +1,7 @@
 {
   "name": "sistema-seguranca",
   "version": "0.1.0",
-  "homepage": " https://liandrolima.github.io/sistema-gerenciamento-seguranca/",
+  "homepage": "https://liandrolima.github.io/sistema-gerenciamento-seguranca/",
   "private": true,
   "proxy": "http://localhost:5000",
   "dependencies": {
